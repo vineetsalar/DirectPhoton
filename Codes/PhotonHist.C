@@ -163,6 +163,13 @@ Double_t InteEtaY(Double_t Mass, Double_t PT, Double_t Temp);
 
 
 
+//Direct Photon
+Double_t RatePhoton(Double_t RCent, Double_t Pt)
+Double_t RateQGP_IntTau(Double_t Pt)
+Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T)
+Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf)
+Double_t RateHadron_IntTau(Double_t Pt)
+Double_t RateHadron(Double_t Pt)
 
 
 
@@ -541,6 +548,125 @@ Double_t NColl(int BinLow, int BinHigh)
 }
 
 
+
+//================================ Direct Photon Functions =======================================//
+Double_t RatePhoton(Double_t RCent, Double_t Pt)
+{
+  Double_t Area = pi*RCent*RCent;
+  Double_t RPhoton =0.0;
+  RPhoton =Area*(RateQGP_IntTau(Pt) + RateHadron_IntTau(Pt));
+
+  return RPhoton;
+
+
+}
+
+
+
+
+Double_t RateQGP_IntTau(Double_t Pt)
+{
+  Double_t Sum =0.0;
+
+  //Double_t tau[10000], Temp[10000], h[10000];
+  //Int_t Ntime;
+  //double Steptime;
+
+  for(int i =0;i<=Ntime;i++)
+    {
+      Sum = Sum + RateQGP_IntEtaf(Pt,Temp[i])*(1-h[i])*tau[i]; 
+
+    }
+
+  return Sum*Steptime;
+
+}
+
+
+Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T)
+{
+  Double_t Etaf=0.0;
+  Double_t EtafMin = -1.0;
+  Double_t EtafMax = 1.0;
+  Double_t EtafStep = 0.0001;
+  Int_t NEtaf = (EtafMax - EtafMin)/EtafStep;
+
+  Double_t Sum =0.0;
+  for(int i =0;i<=NEtaf;i++)
+    {
+      Etaf = EtafMin + i*EtafStep;
+      Sum =Sum + RateQGP(Pt,T,Etaf);
+    }
+
+  return Sum*EtafStep;
+}
+
+
+
+Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf)
+{
+  Double_t yy =0.0; 
+  Double_t E = Pt*TMath::CosH(yy-Etaf);
+
+  Double_t Alpha =1.0/137.0;
+  //Nf, TC
+  Double_t AlphaS = 6.0*pi/((33.0-2.0*Nf)*TMath::Log(8.0*T/TC));
+
+  Double_t RQGP1 =0.0; 
+  Double_t Const1=(5.0*Alpha)/(18.0*pi2);
+  RQGP1 = Const1*Alpha*AlphaS*TMath::Log(0.23*E/(AlphaS*T))*T*T*TMath::Exp(-(E/T));
+
+  Double_t RQGP2 =0.0; 
+  Double_t Const2=0.0219;
+  RQGP1 = Const2*Alpha*AlphaS*T*T*TMath::Exp(-(E/T));
+
+  Double_t RQGP3 =0.0; 
+  Double_t Const3=0.0105;
+  RQGP1 = Const3*Alpha*AlphaS*E*T*TMath::Exp(-(E/T));
+
+  Double_t RQGP =0.0; 
+
+  RQGP = RQGP1 + RQGP2 + RQGP3; 
+
+  return RQGP;
+}
+
+
+
+Double_t RateHadron_IntTau(Double_t Pt)
+{
+  Double_t Sum =0.0;
+  Double_t IntEtaf = 2.0;
+
+  //Double_t tau[10000], Temp[10000], h[10000];
+  //Int_t Ntime;
+  //double Steptime;
+
+  for(int i =0;i<=Ntime;i++)
+    {
+      Sum = Sum + h[i]*tau[i]; 
+
+    }
+
+  return Sum*IntEtaf*RateHadron(Pt)*Steptime;
+
+
+}
+
+
+Double_t RateHadron(Double_t Pt)
+{
+  Double_t a = -4.1506;
+  Double_t b = -1.9845;
+  Double_t c = 0.0744;
+  Double_t d =-0.0383;
+
+  Double_t RHadron =0.0;
+  RHadron = TMath::Exp(a+b*Pt+c*Pt*Pt+d*Pt*Pt*Pt);
+  return RHadron;
+
+
+}
 
 
 
