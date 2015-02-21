@@ -41,6 +41,7 @@ Double_t pi2 = pi*pi;
 Double_t pi3 = pi*pi2;
 Double_t pi4 = pi2*pi2;
 Double_t hbarc = 0.197327;
+Double_t hbarc2 = hbarc*hbarc;
 Double_t hbarc3 = hbarc*hbarc*hbarc;
 Double_t hbarc4 = hbarc*hbarc*hbarc*hbarc;
 
@@ -154,10 +155,13 @@ Double_t RatePhoton(Double_t RCent, Double_t Pt);
 Double_t RateQGP_IntTau(Double_t Pt);
 Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T);
 Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf);
+
 Double_t RateHadron_IntTau(Double_t Pt);
-Double_t RateHadron(Double_t Pt);
+Double_t RateHadron_IntEtaf(Double_t Pt, Double_t T);
+Double_t RateHadron(Double_t Pt, Double_t T, Double_t Etaf);
 
-
+Double_t RateQCD_IntTau(Double_t Pt);
+Double_t RateQCD(Double_t Pt);
 
 
 
@@ -242,11 +246,13 @@ void PhotonHist()
   //CalTime();
   
   //CalculateTandf_LatticeEOS(Double_t ssCent, Double_t R0Cent);
+  
   Double_t R0MB = R05*TMath::Power(Npart(0,40)/Npart(0,2),0.5);
   Double_t ssMB = ss05*(funTwoComp->Eval(Npart(0,40))/dNdEtabyNpartby2[0]);
   
   Ntime=0;
   CalculateTandf_LatticeEOS(ssMB, R0MB);
+
 
   cout<<" Ntime "<<Ntime <<" ssMB "<<ssMB<<"  R0MB: "<<R0MB<<endl;
   
@@ -282,38 +288,94 @@ void PhotonHist()
   grFQGPVsTauAnaC->Draw("AL");
 
 
+  Double_t R040 = R05*TMath::Power(Npart(0,16)/Npart(0,2),0.5);
+  Double_t ss040 = ss05*(funTwoComp->Eval(Npart(0,16))/dNdEtabyNpartby2[0]);
+  
+  Ntime=0;
+  CalculateTandf_LatticeEOS(ss040, R040);
+
+
   Double_t PtMin =0.1;
-  Double_t PtMax =5.0;
-  Double_t PtStep =0.1;
+  Double_t PtMax =12.0;
+  Double_t PtStep =0.5;
   Int_t NPt = (PtMax - PtMin)/PtStep;
   
   Double_t Pt[100]={0.0};
   Double_t DirectPhoton[100]={0.0};
 
+  Double_t DirectPhotonQGP[100]={0.0};
+  Double_t DirectPhotonHadron[100]={0.0};
+
+  //Double_t RateQGP_IntTau(Double_t Pt)
+
+
   //Double_t R0MB = R05*TMath::Power(Npart(0,40)/Npart(0,2),0.5);
 
-  cout<<"Pt:  "<<"      "<<"RatePhoton"<<endl;
+  cout<<"Pt:  "<<"      "<<"Hadron  "<<"QGP  "<<"RatePhoton"<<endl;
   for(int i =0;i<NPt;i++)
     {
       Pt[i]=PtMin+i*PtStep;
       
-      DirectPhoton[i] = RatePhoton(R0MB,Pt[i]);
-      cout<<Pt[i]<<"    "<<DirectPhoton[i]<<endl;
+      DirectPhotonQGP[i] = pi*R040*R040*RateQGP_IntTau(Pt[i])/hbarc2;
+      DirectPhotonHadron[i] = pi*R040*R040*RateHadron_IntTau(Pt[i])/hbarc2;
+
+      DirectPhoton[i] = RatePhoton(R040,Pt[i])/hbarc2;
+      
+
+
+      cout<<Pt[i]<<"    "<<DirectPhotonHadron[i]<<"    "<<DirectPhotonQGP[i]<<"   "<<DirectPhoton[i]<<endl;
     }  
+
+
+  TGraph *grfDirectPhotonQGP = new TGraph(NPt,Pt,DirectPhotonQGP);
+  grfDirectPhotonQGP->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfDirectPhotonQGP->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  grfDirectPhotonQGP->GetYaxis()->SetTitleOffset(1.4);
+  //grfDirectPhotonQGP->GetYaxis()->SetRangeUser(0.00001,100);
+  grfDirectPhotonQGP->SetLineColor(2);
+
+
+  TGraph *grfDirectPhotonHadron = new TGraph(NPt,Pt,DirectPhotonHadron);
+  grfDirectPhotonHadron->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfDirectPhotonHadron->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  grfDirectPhotonHadron->GetYaxis()->SetTitleOffset(1.4);
+  //grfDirectPhotonHadron->GetYaxis()->SetRangeUser(0.00001,100);
+  grfDirectPhotonHadron->SetLineColor(1);
+
+
+
 
   TGraph *grfDirectPhoton = new TGraph(NPt,Pt,DirectPhoton);
   grfDirectPhoton->GetXaxis()->SetTitle("p_{T}[GeV/c]");
   grfDirectPhoton->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
   grfDirectPhoton->GetYaxis()->SetTitleOffset(1.4);
-  grfDirectPhoton->GetYaxis()->SetRangeUser(0.00001,100);
+  //grfDirectPhoton->GetYaxis()->SetRangeUser(0.00001,100);
   
+  TLegend *legd5 = new TLegend( 0.60,0.70,0.82,0.85);
+  legd5->SetBorderSize(0);
+  legd5->SetFillStyle(0);
+  legd5->SetFillColor(0);
+  legd5->SetTextSize(0.040);
+
+  legd5->AddEntry(grfDirectPhoton,"Sum","L");
+  legd5->AddEntry(grfDirectPhotonQGP,"QGP","L");
+  legd5->AddEntry(grfDirectPhotonHadron,"Hadron","L");
+
+
+  
+
+
+
+
   new TCanvas;
   gPad->SetTicks();
   gPad->SetLogy();
   grfDirectPhoton->SetLineWidth(2);
+  grfDirectPhoton->SetLineColor(4);
   grfDirectPhoton->Draw("APL");
-
-
+  grfDirectPhotonHadron->Draw("Lsame");
+  grfDirectPhotonQGP->Draw("Lsame");
+  legd5->Draw("Lsame");
 
 
 
@@ -479,8 +541,76 @@ Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf)
 }
 
 
+// ================================= Rate Hadron ==============================//
 
 Double_t RateHadron_IntTau(Double_t Pt)
+{
+  Double_t Sum =0.0;
+
+  //Double_t tau[10000], Temp[10000], h[10000];
+  //Int_t Ntime;
+  //double Steptime;
+
+  for(int i =0;i<=Ntime;i++)
+    {
+      Sum = Sum + RateHadron_IntEtaf(Pt,Temp[i])*h[i]*tau[i]; 
+
+    }
+
+  return Sum*Steptime*hbarc4;
+
+}
+
+
+
+Double_t RateHadron_IntEtaf(Double_t Pt, Double_t T)
+{
+  Double_t Etaf=0.0;
+  Double_t EtafMin = -1.0;
+  Double_t EtafMax = 1.0;
+  Double_t EtafStep = 0.0001;
+  Int_t NEtaf = (EtafMax - EtafMin)/EtafStep;
+
+  Double_t Sum =0.0;
+  for(int i =0;i<=NEtaf;i++)
+    {
+      Etaf = EtafMin + i*EtafStep;
+      Sum =Sum + RateHadron(Pt,T,Etaf);
+    }
+
+  return Sum*EtafStep;
+}
+
+
+
+Double_t RateHadron(Double_t Pt, Double_t T, Double_t Etaf)
+{
+  Double_t yy =0.0; 
+  Double_t E = Pt*TMath::CosH(yy-Etaf);
+
+  Double_t RHadron =0.0; 
+
+  Double_t Const=4.8;
+  
+  Double_t Exponent = 1.0/(TMath::Power((1.35*T*E),0.77));
+
+  RHadron = Const*TMath::Power(T,2.15)*TMath::Exp(-Exponent)*TMath::Exp(-(E/T));
+
+  return RHadron;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+Double_t RateQCD_IntTau(Double_t Pt)
 {
   Double_t Sum =0.0;
   Double_t IntEtaf = 2.0;
@@ -495,22 +625,22 @@ Double_t RateHadron_IntTau(Double_t Pt)
 
     }
 
-  return Sum*IntEtaf*RateHadron(Pt)*Steptime;
+  return Sum*IntEtaf*RateQCD(Pt)*Steptime;
 
 
 }
 
 
-Double_t RateHadron(Double_t Pt)
+Double_t RateQCD(Double_t Pt)
 {
   Double_t a = -4.1506;
   Double_t b = -1.9845;
   Double_t c = 0.0744;
   Double_t d =-0.0383;
 
-  Double_t RHadron =0.0;
-  RHadron = TMath::Exp(a+b*Pt+c*Pt*Pt+d*Pt*Pt*Pt);
-  return RHadron;
+  Double_t RQCD =0.0;
+  RQCD = TMath::Exp(a+b*Pt+c*Pt*Pt+d*Pt*Pt*Pt);
+  return RQCD;
 
 
 }
