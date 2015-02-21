@@ -36,17 +36,6 @@
 #include "TSystem.h"
 
 
-
-
-
-
-
-
-
-
-
-
-
 Double_t pi = TMath::Pi();
 Double_t pi2 = pi*pi;
 Double_t pi3 = pi*pi2;
@@ -149,27 +138,24 @@ double Steptime;
 
 
 
-
+/*
 Double_t GetYdist(Double_t Y); 
-
 Double_t InteTimeY(Double_t Mass, Double_t Y);
 Double_t InteEtaPT(Double_t Mass, Double_t Y, Double_t Temp);
-
 Double_t InteTime(Double_t Mass);
 Double_t InteEtaPTY(Double_t Mass, Double_t Temp);
-
 Double_t InteTime(Double_t Mass, Double_t PT); 
 Double_t InteEtaY(Double_t Mass, Double_t PT, Double_t Temp);
-
+*/
 
 
 //Direct Photon
-Double_t RatePhoton(Double_t RCent, Double_t Pt)
-Double_t RateQGP_IntTau(Double_t Pt)
-Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T)
-Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf)
-Double_t RateHadron_IntTau(Double_t Pt)
-Double_t RateHadron(Double_t Pt)
+Double_t RatePhoton(Double_t RCent, Double_t Pt);
+Double_t RateQGP_IntTau(Double_t Pt);
+Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T);
+Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf);
+Double_t RateHadron_IntTau(Double_t Pt);
+Double_t RateHadron(Double_t Pt);
 
 
 
@@ -194,8 +180,8 @@ void PhotonHist()
   gStyle->SetOptStat(0); 
   gStyle->SetOptFit(0);
   gStyle->SetHistLineWidth(2.0);
-  gStyle->SetCanvasDefH(800);
-  gStyle->SetCanvasDefW(800);  
+  gStyle->SetCanvasDefH(600);
+  gStyle->SetCanvasDefW(600);  
   
 
   
@@ -296,185 +282,46 @@ void PhotonHist()
   grFQGPVsTauAnaC->Draw("AL");
 
 
+  Double_t PtMin =0.1;
+  Double_t PtMax =5.0;
+  Double_t PtStep =0.1;
+  Int_t NPt = (PtMax - PtMin)/PtStep;
   
+  Double_t Pt[100]={0.0};
+  Double_t DirectPhoton[100]={0.0};
+
+  //Double_t R0MB = R05*TMath::Power(Npart(0,40)/Npart(0,2),0.5);
+
+  cout<<"Pt:  "<<"      "<<"RatePhoton"<<endl;
+  for(int i =0;i<NPt;i++)
+    {
+      Pt[i]=PtMin+i*PtStep;
+      
+      DirectPhoton[i] = RatePhoton(R0MB,Pt[i]);
+      cout<<Pt[i]<<"    "<<DirectPhoton[i]<<endl;
+    }  
+
+  TGraph *grfDirectPhoton = new TGraph(NPt,Pt,DirectPhoton);
+  grfDirectPhoton->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfDirectPhoton->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  grfDirectPhoton->GetYaxis()->SetTitleOffset(1.4);
+  grfDirectPhoton->GetYaxis()->SetRangeUser(0.00001,100);
+  
+  new TCanvas;
+  gPad->SetTicks();
+  gPad->SetLogy();
+  grfDirectPhoton->SetLineWidth(2);
+  grfDirectPhoton->Draw("APL");
+
+
+
+
+
+
   return;
 
 
 
-
-  int nbins = 100;
-  Double_t step = 0.1;
-
-  TH1F *diMuonsInvMass = new TH1F("diMuonsInvMass","diMuonsInvMass", nbins,0.0,10.0);
-  TH1F *diMuonsPt = new TH1F("diMuonsPt","diMuonsPt", 100,0.0,10.0);
-  TH1F *diMuonsRap = new TH1F("diMuonsRap","diMuonsRap", 100,-6,6);
-  TH2F *diMuonsMassPt = new TH2F("diMuonsMassPt","diMuonsMassPt", nbins,0.0,10.0, nbins, 0.0, 10.0);
-
-  // Pt and rapidity graphs
-
-
-  // Output spectra file 
-  TFile *filespectra = new TFile("OutPhotonHist.root", "recreate");
-
-  //**********************************************************************
-
-
-  ////  Calculate dN/dM
-  Double_t Mass[1000], DNDM[1000];
-  Double_t sumMass =0.0;
-
-  for(int i = 1; i <= nbins; ++i){
-    Mass[i] = diMuonsInvMass->GetBinCenter(i);
-    DNDM[i] = InteTime(Mass[i]);
-
-    diMuonsInvMass->SetBinContent(i,DNDM[i]);
-
-    cout << Mass[i] <<"       " << DNDM[i] << endl;
-    sumMass = sumMass + DNDM[i]*step;
-  }
-
-  cout << "Total Integral of Mass Distribution  = " << sumMass << endl;
-
-  new TCanvas;
-  gPad->SetLogy(1);
-  gPad->SetTickx();
-  gPad->SetTicky();
-  diMuonsInvMass->SetLineColor(2);
-  diMuonsInvMass->Draw();
- 
-  
-  TGraph *grfPt = new TGraph(nbins, Mass, DNDM);
-  grfPt->SetName("pt");
-  grfPt->GetYaxis()->SetTitle("dN/dp_{T}(GeV/c)^{-1}");
-  grfPt->GetYaxis()->SetTitleOffset(1.2);
-  grfPt->GetYaxis()->CenterTitle();
-  grfPt->GetXaxis()->SetTitle("p_{T}(GeV/c)");
-  //grfPt->GetYaxis()->SetRangeUser(0.0000000001,0.002);
-  grfPt->GetXaxis()->CenterTitle();
-  new TCanvas;
-  gPad->SetLogy(1);
-  gPad->SetTickx();
-  gPad->SetTicky();
-  grfPt->Draw("ALP");
-
-
-  cout<<" integral of mass graph as pT: "<<grfPt->Integral()<<endl;
-
-
-
-
-
-  cout << " Integral of Mass Histogram  =  "<<diMuonsInvMass->Integral("width") << endl;
-
-
-  // Fill a 2D histogram of Mass and pT
-
-  Double_t mass, apt, Yield;
-
-  double Integ = 0.0;
-
-  for(int i = 1; i <= nbins; ++i){
-    mass = diMuonsMassPt->GetXaxis()->GetBinCenter(i);
-    double sumPT =0.0;
-    for(int j = 1; j <= nbins; ++j){
-      
-      apt = diMuonsMassPt->GetYaxis()->GetBinCenter(j);
-      Yield = InteTime(mass, apt);
-      diMuonsMassPt->SetBinContent(i, j, Yield);
-      
-      //cout<<" pt 2 d : " <<diMuonsMassPt->GetBinContent(j)<<endl;
-      
-      sumPT = sumPT+Yield*step;
-    }
-    Integ = Integ + sumPT*step;
-    cout << mass <<"       " << sumPT << endl;
-  }
-
-
-  double gPt[100];
-  double gDnDpt[100];
-
-for(int i = 1; i <= nbins; ++i){
-
-  gPt[i]=diMuonsMassPt->ProjectionX()->GetBinCenter(i);
-  gDnDpt[i]=diMuonsMassPt->ProjectionX()->GetBinContent(i);
-
- }
- 
-/* TGraph *grfPt = new TGraph(nbins, gPt, gDnDpt);
- grfPt->SetName("pt");
- grfPt->GetYaxis()->SetTitle("dN/dp_{T}(GeV/c)^{-1}");
- grfPt->GetYaxis()->SetTitleOffset(1.2);
- grfPt->GetYaxis()->CenterTitle();
- grfPt->GetXaxis()->SetTitle("p_{T}(GeV/c)");
- grfPt->GetYaxis()->SetRangeUser(0.0000000001,0.2);
- grfPt->GetXaxis()->CenterTitle();
- new TCanvas;
- gPad->SetLogy(1);
- gPad->SetTickx();
- gPad->SetTicky();
- grfPt->Draw("ALP");*/
- 
- cout << " Integral from 2D data sum = " << Integ << endl;
- cout << " Integral from 2D histo = " << diMuonsMassPt->Integral("width") << endl;
- 
- 
-  new TCanvas;
-  gPad->SetTickx();
-  gPad->SetTicky();
-  diMuonsMassPt->Draw("lego");
-  
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //////Calculate dn/dy
-  cout << endl <<" dN/dY " << endl << endl;
-
-  double yyg[100];
-  double dndyg[100];
-  for(Int_t i=1; i <= nbins; i++) {
-    double yy = diMuonsRap->GetBinCenter(i);
-    yyg[i]=yy;
-    double dndy = GetYdist(yy);
-    dndyg[i]=dndy;
-    diMuonsRap->SetBinContent(i,dndy);
-    cout << yy <<"       " << dndy << endl;
-    //cout <<yyg[i]  <<" xxxx   " <<dndyg[i]<< endl;
-  }
-  
-  TGraph *grfRap = new TGraph(nbins, yyg, dndyg);
-  grfRap->SetName("Rap");
-  grfRap->GetYaxis()->SetTitle("dN/dy");
-  grfRap->GetYaxis()->SetTitleOffset(1.2);
-  grfRap->GetYaxis()->CenterTitle();
-  grfRap->GetXaxis()->SetTitle("y");
-  //grfRap->GetYaxis()->SetRangeUser(0.000001,0.001);
-  grfRap->GetXaxis()->CenterTitle();
-  new TCanvas;
-  gPad->SetLogy(1);
-  gPad->SetTickx();
-  gPad->SetTicky();
-  grfRap->Draw("ALP");
-  
-  cout<<" integral of rap graph : "<< grfRap->Integral()<<endl;
-
-  new TCanvas;
-  gPad->SetTickx();
-  gPad->SetTicky(); 
-  diMuonsRap->SetLineColor(2);
-  diMuonsRap->Draw();
-
-  
-  ///// Write the spectra 
-  grfPt->Write();
-  grfRap->Write();
-  
-  diMuonsInvMass->Write();
-  //diMuonsPt->Write();
-  diMuonsRap->Write();
-  diMuonsMassPt->Write();
-
-  filespectra->Close();
-  return;
 }
 
 
@@ -685,6 +532,7 @@ Double_t RateHadron(Double_t Pt)
 
 
 
+/*
 
 ////////// Get dN/dy /////////////////////////////////
 
@@ -840,7 +688,7 @@ Double_t InteEtaY(Double_t Mass, Double_t PT, Double_t Temp) {
 }
 
 ///////////////////
-
+*/
 
 
 
