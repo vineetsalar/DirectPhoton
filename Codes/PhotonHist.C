@@ -155,13 +155,21 @@ Double_t RatePhoton(Double_t RCent, Double_t Pt);
 Double_t RateQGP_IntTau(Double_t Pt);
 Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T);
 Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf);
-
 Double_t RateHadron_IntTau(Double_t Pt);
 Double_t RateHadron_IntEtaf(Double_t Pt, Double_t T);
 Double_t RateHadron(Double_t Pt, Double_t T, Double_t Etaf);
-
 Double_t RateQCD_IntTau(Double_t Pt);
 Double_t RateQCD(Double_t Pt);
+
+
+//======= Data Graphs =========================//
+void Draw_PHENIX_DirectPhotonRate020_Pt(TLegend *lgd);
+void Draw_PHENIX_DirectPhotonRate2040_Pt(TLegend *lgd);  
+void Draw_PHENIX_DirectPhotonRate4060_Pt(TLegend *lgd);  
+void Draw_PHENIX_DirectPhotonRate6092_Pt(TLegend *lgd);  
+
+
+void Draw_AllDataGraphs();
 
 
 
@@ -171,7 +179,7 @@ void PhotonHist()
   gStyle->SetPalette(1);
   //gStyle->SetPadTopMargin(0.10);
   //gStyle->SetPadBottomMargin(0.10);
-  gStyle->SetPadLeftMargin(0.12);
+  gStyle->SetPadLeftMargin(0.19);
   //gStyle->SetPadRightMargin(0.15);
   gStyle->SetFrameBorderMode(0);
   gStyle->SetFrameFillColor(0);
@@ -187,6 +195,20 @@ void PhotonHist()
   gStyle->SetCanvasDefH(600);
   gStyle->SetCanvasDefW(600);  
   
+  // ================== Checking Data Graphs ===============================//
+  cout<<" ========== checking data graphs =================================="<<endl;
+
+  Draw_AllDataGraphs();
+
+  return;
+
+
+
+
+
+
+
+
 
   
   cout<<" simulating QGP evolution : "<<endl;
@@ -316,10 +338,10 @@ void PhotonHist()
     {
       Pt[i]=PtMin+i*PtStep;
       
-      DirectPhotonQGP[i] = pi*R040*R040*RateQGP_IntTau(Pt[i])/hbarc2;
-      DirectPhotonHadron[i] = pi*R040*R040*RateHadron_IntTau(Pt[i])/hbarc2;
+      DirectPhotonQGP[i] = pi*R040*R040*RateQGP_IntTau(Pt[i])/hbarc4;
+      DirectPhotonHadron[i] = pi*R040*R040*RateHadron_IntTau(Pt[i])/hbarc4;
 
-      DirectPhoton[i] = RatePhoton(R040,Pt[i])/hbarc2;
+      DirectPhoton[i] = RatePhoton(R040,Pt[i])/hbarc4;
       
 
 
@@ -647,178 +669,322 @@ Double_t RateQCD(Double_t Pt)
 
 
 
+// ===================================== Direct Photon Graphs (PHENIX) =======================================//
+
+void Draw_AllDataGraphs()
+{
+ 
+  TLegend *legend_ratio = new TLegend(0.1677852,0.72,0.83,0.90);
+  legend_ratio->SetBorderSize(0);
+  legend_ratio->SetFillStyle(0);
+  legend_ratio->SetFillColor(0);
+  legend_ratio->SetTextSize(0.04);
+
+
+  new TCanvas;
+  gPad->SetTickx();
+  gPad->SetTicky();
+  gPad->SetLogy();
+  Draw_PHENIX_DirectPhotonRate020_Pt(legend_ratio);  
 
 
 
+  new TCanvas;
+  gPad->SetTickx();
+  gPad->SetTicky();
+  gPad->SetLogy();
+  Draw_PHENIX_DirectPhotonRate2040_Pt(legend_ratio);  
+  
 
 
+  new TCanvas;
+  gPad->SetTickx();
+  gPad->SetTicky();
+  gPad->SetLogy();
+  Draw_PHENIX_DirectPhotonRate4060_Pt(legend_ratio);  
+
+  new TCanvas;
+  gPad->SetTickx();
+  gPad->SetTicky();
+  gPad->SetLogy();
+  Draw_PHENIX_DirectPhotonRate6092_Pt(legend_ratio);  
 
 
-
-
-
-
-
-
-
-
-/*
-
-////////// Get dN/dy /////////////////////////////////
-
-Double_t GetYdist(Double_t Y) {
-  Double_t MassLow = 0.1;
-  Double_t MassUp = 5.0;       
-  Double_t Mstep = 0.1;
-  Double_t Nmass = (MassUp - MassLow)/Mstep;
-  double sum = 0;    
-  for(Int_t i=0; i<=Nmass; i++) {
-    Double_t massy = MassLow + i * Mstep;
-    Double_t fun = InteTimeY(massy, Y);
-    sum = sum + fun*Mstep;
-  }
-  return sum;
-}
-
-Double_t InteTimeY(Double_t Mass, Double_t Y) {
-  // Quark and hadron form factors
-  Double_t Fq = 5.0/9.0;
-  Double_t Fh = 1.0/12.0;
-  //Double_t Fh = 1.0;
-
-  Double_t sum = 0.0;
-  for(int i = 0; i < Ntime; i++) {
-    Double_t step = tau[i+1] - tau[i];
-    Double_t FF = Fq*(1-h[i]) + Fh*h[i];
-    Double_t fun = FF*tau[i]*InteEtaPT(Mass, Y, Temp[i]);
-    sum = sum + fun*step;
-  }
-
-  return contime*sum;
-} 
-
-
-Double_t InteEtaPT(Double_t Mass, Double_t Y, Double_t Temp) {
-  Double_t step = 0.1;
-  Int_t N = (EtaEnd - EtaStart)/step + 0.0001;
-  Double_t sum = 0;
-
-  for(int i = 0; i <= N; i++) {
-    Double_t Eta = EtaStart + i*step;
-
-    // Calculate Rate
-    Double_t xx = Mass*TMath::CosH(Y-Eta)/Temp;
-    if(xx > 100) xx=100;
-    Double_t fun = Mass*Mass*Mass* (1.0/(xx*xx) + 1.0/xx)*exp(-xx);
-
-    sum = sum + fun;
-  }
-  double val = sum*step*conrate;
-
-  //  cout << Mass <<"   " << Y <<"   "<< val << endl;
-
-  return val;
+  legend_ratio->Draw("same");
 }
 
 
 
-/////////////// dN/dM ///////////////
 
-Double_t InteTime(Double_t Mass) {
-  // Quark and hadron form factors
-  Double_t Fq = 5.0/9.0;
-  //Double_t Mrho,Mrho2,Wrho,Wrho2;
-  //Mrho=1.02; Wrho=0.005; Mrho2=Mrho*Mrho; Wrho2=Wrho*Wrho;
-  ///Fh=Mrho2*Mrho2/( (Mrho2 -Mass*Mass)*(Mrho2 -Mass*Mass) + Mrho2*Wrho2) /12.0;
 
-  Double_t Fh = 1.0/12.0;
-  //Double_t Fh = 1.0;
 
-  Double_t sum = 0.0;
-  for(int i = 0; i < Ntime; i++) {
-    Double_t step = tau[i+1] - tau[i];
-    Double_t FF = Fq*(1-h[i]) + Fh*h[i];
-    Double_t fun = 0.0;
 
-    fun = FF*tau[i]*InteEtaPTY(Mass, Temp[i]);
 
-    sum = sum + fun*step;
-  }
-  return contime*sum;
-} 
 
-Double_t InteEtaPTY(Double_t Mass, Double_t Temp) {
+
+void Draw_PHENIX_DirectPhotonRate020_Pt(TLegend *lgd)
+{
+
   
-  Double_t Y=0;
-  Double_t step = 0.1;
+  Double_t Pt[11]=   {0.50,0.70,0.90,1.10,1.30,1.50,1.70,1.90,2.25,3.00,4.25}; 
+  Double_t ErrPt[11]={0.0};
   
-  Int_t N = (EtaEnd - EtaStart)/step + 0.0001;
-  Double_t sum = 0;
+  Double_t D2NDPtDy[11]={18.384316,3.863694,1.531712,0.500764,0.248402,0.105543,0.071944,0.028950,0.007928,0.001125,0.000025}; 
+  Double_t StatErrD2NDPtDy[11]={4.162295,0.908128,0.313389,0.119182,0.053970,0.025248,0.014094,0.007115,0.001929,0.000274,0.000033}; 
+  Double_t SystErrD2NDPtDy[11]={4.963615,1.412782,0.499280,0.184227,0.077102,0.032901,0.016161,0.007324,0.002126,0.000242,0.000012}; 
+  
+  for(int j=0;j<11;j++){
+    
+    cout<<Pt[j]<<"  "<<D2NDPtDy[j]<<"   "<<StatErrD2NDPtDy[j]<<"   "<<SystErrD2NDPtDy[j]<<endl;
 
-  for(int i = 0; i <= N; i++) {
-    Double_t Eta = EtaStart + i*step;
+      
+      }
+  
 
-    // Calculate Rate
-    Double_t xx = Mass*TMath::CosH(Y-Eta)/Temp;
-    if(xx > 100) xx=100;
-    Double_t fun = Mass*Mass*Mass* (1.0/(xx*xx) + 1.0/xx)*exp(-xx);
-    sum = sum + fun;
+  TGraphErrors *PhotonRatePHENIXdata = new TGraphErrors(11,Pt,D2NDPtDy,ErrPt,StatErrD2NDPtDy);
+  PhotonRatePHENIXdata->SetMarkerStyle(20);
+  PhotonRatePHENIXdata->SetMarkerColor(kBlue+0);
+  PhotonRatePHENIXdata->SetMarkerSize(1.1);
+  PhotonRatePHENIXdata->GetYaxis()->SetTitleOffset(1.8);
+  PhotonRatePHENIXdata->GetYaxis()->SetRangeUser(0.000001,60.0);
+  TAxis *Xaxis1 = PhotonRatePHENIXdata->GetXaxis();
+  Xaxis1->SetLimits(0.0,5.2);
+   
+
+  PhotonRatePHENIXdata->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  PhotonRatePHENIXdata->GetYaxis()->SetTitle("#frac{1}{2#pi p_{T}}#frac{d^{2}N}{dp_{T}dy}[(GeV/c)^{-2}]");
+  
+  PhotonRatePHENIXdata->Draw("AP");
+
+    
+  
+  TBox *SystErrPhotonRate[11];
+  Double_t PtBound[12]=   {0.4, 0.60, 0.80,1.0,1.20, 1.40, 1.60, 1.80, 2.0,  2.5, 3.5, 5.0};
+  for(int j=0;j<11;j++){
+    SystErrPhotonRate[j] = new TBox(PtBound[j], D2NDPtDy[j]-SystErrD2NDPtDy[j], PtBound[j+1], D2NDPtDy[j]+SystErrD2NDPtDy[j]);
   }
-  double val = sum*step*conrate;
-
-  // Y Integration 
-  val = 2.0*val;
-  return val;
+  
+  for(int j=0;j<11;j++){
+    SystErrPhotonRate[j]->SetFillStyle(9001);
+    SystErrPhotonRate[j]->SetLineColor(kBlue);
+    SystErrPhotonRate[j]->Draw("same"); 
+  }
+    
+  TLatex *tb= new TLatex;
+  tb->SetNDC(); 
+  tb->SetTextAlign(12);
+  tb->SetTextColor(1);
+  tb->SetTextSize(0.040);
+  tb->DrawLatex(0.22,0.20,"AuAu #sqrt{s_{NN}} = 200GeV");
+  tb->DrawLatex(0.22,0.15,"0-20%");
+ 
+  //lgd->AddEntry(PhotonRatePHENIXdata,"Inclusive Photons", "P");
+  
+  
+  
 }
 
 
 
-//////////  dN/(dMdpT) ///////////
+void Draw_PHENIX_DirectPhotonRate2040_Pt(TLegend *lgd)
+{
 
-Double_t InteTime(Double_t Mass, Double_t PT) {
-  // Quark and hadron form factors
-  Double_t Fq = 5.0/9.0;
-  // Double_t Fh = 1.0/12.0;
-  Double_t Fh = 1.0;
+  
+  Double_t Pt[11]=   {0.50,0.70,0.90,1.10,1.30,1.50,1.70,1.90,2.25,3.00,4.25}; 
+  Double_t ErrPt[11]={0.0};
+  
+  Double_t D2NDPtDy[11]={5.954453,0.906468,0.396036,0.215631,0.110570,0.050032,0.019825,0.011294,0.004157,0.000554,0.000044}; 
+  Double_t StatErrD2NDPtDy[11]={1.590491,0.350932,0.121966,0.050980,0.023209,0.011015,0.005521,0.003037,0.000919,0.000135,0.000018}; 
+   Double_t SystErrD2NDPtDy[11]={2.116200,0.588297,0.209478,0.084104,0.036068,0.015939,0.007187,0.003575,0.001142,0.000135,0.000009}; 
+   
 
-  Double_t sum = 0.0;
-  for(int i = 0; i < Ntime; i++) {
-    Double_t step = tau[i+1] - tau[i];
-    Double_t FF = Fq*(1-h[i]) + Fh*h[i];
-    Double_t fun = 0.0;
 
-    fun = FF*tau[i]*InteEtaY(Mass, PT, Temp[i]);
-    sum = sum + fun*step;
+
+  for(int j=0;j<11;j++){
+    
+    cout<<Pt[j]<<"  "<<D2NDPtDy[j]<<"   "<<StatErrD2NDPtDy[j]<<"   "<<SystErrD2NDPtDy[j]<<endl;
+
+      
+      }
+  
+
+  TGraphErrors *PhotonRatePHENIXdata = new TGraphErrors(11,Pt,D2NDPtDy,ErrPt,StatErrD2NDPtDy);
+  PhotonRatePHENIXdata->SetMarkerStyle(20);
+  PhotonRatePHENIXdata->SetMarkerColor(kBlue+0);
+  PhotonRatePHENIXdata->SetMarkerSize(1.1);
+  PhotonRatePHENIXdata->GetYaxis()->SetTitleOffset(1.8);
+  PhotonRatePHENIXdata->GetYaxis()->SetRangeUser(0.000001,60.0);
+  TAxis *Xaxis1 = PhotonRatePHENIXdata->GetXaxis();
+  Xaxis1->SetLimits(0.0,5.2);
+   
+
+  PhotonRatePHENIXdata->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  PhotonRatePHENIXdata->GetYaxis()->SetTitle("#frac{1}{2#pi p_{T}}#frac{d^{2}N}{dp_{T}dy}[(GeV/c)^{-2}]");
+  
+  PhotonRatePHENIXdata->Draw("AP");
+
+    
+  
+  TBox *SystErrPhotonRate[11];
+  Double_t PtBound[12]=   {0.4, 0.60, 0.80,1.0,1.20, 1.40, 1.60, 1.80, 2.0,  2.5, 3.5, 5.0};
+  for(int j=0;j<11;j++){
+    SystErrPhotonRate[j] = new TBox(PtBound[j], D2NDPtDy[j]-SystErrD2NDPtDy[j], PtBound[j+1], D2NDPtDy[j]+SystErrD2NDPtDy[j]);
   }
-  return contime*sum;
-} 
-
-Double_t InteEtaY(Double_t Mass, Double_t PT, Double_t Temp) {
   
-
-  Double_t Y=0;
-  Double_t step = 0.1;
-  Int_t N = (EtaEnd - EtaStart)/step + 0.0001;
-  Double_t sum = 0;
-  
-  //  Integrate over eta  
-  for(int i = 0; i <= N; i++) {
-    Double_t Eta = EtaStart + i*step;
-
-    Double_t xx = TMath::Sqrt(Mass*Mass + PT*PT)*TMath::CosH(Y-Eta)/Temp;
-    if(xx > 100) xx=100;
-    Double_t funm = Mass*exp(-xx)*PT;
-    sum = sum + funm;
+  for(int j=0;j<11;j++){
+    SystErrPhotonRate[j]->SetFillStyle(9001);
+    SystErrPhotonRate[j]->SetLineColor(kBlue);
+    SystErrPhotonRate[j]->Draw("same"); 
   }
+    
+  TLatex *tb= new TLatex;
+  tb->SetNDC(); 
+  tb->SetTextAlign(12);
+  tb->SetTextColor(1);
+  tb->SetTextSize(0.040);
+  tb->DrawLatex(0.22,0.20,"AuAu #sqrt{s_{NN}} = 200GeV");
+  tb->DrawLatex(0.22,0.15,"20-40%");
+ 
+  //lgd->AddEntry(PhotonRatePHENIXdata,"Inclusive Photons", "P");
   
-  double val = sum * conrate *step; 
-  val = 2.0*val;   // Y Integral
-
-  return val;
+  
+  
 }
 
-///////////////////
-*/
 
 
 
+
+
+
+
+
+
+
+
+
+void Draw_PHENIX_DirectPhotonRate4060_Pt(TLegend *lgd)
+{
+
+  
+  Double_t Pt[11]=   {0.50,0.70,0.90,1.10,1.30,1.50,1.70,1.90,2.25,3.00,4.25}; 
+  Double_t ErrPt[11]={0.0};
+  Double_t D2NDPtDy[11]={2.064060,0.530987,0.168944,0.061616,0.041359,0.014628,0.006184,0.003108,0.000850,0.000095,0.000008}; 
+  Double_t StatErrD2NDPtDy[11]={0.615983,0.141643,0.047410,0.018912,0.009241,0.004274,0.002196,0.001249,0.000359,0.000054,0.000007}; 
+  Double_t SystErrD2NDPtDy[11]={0.794669,0.232527,0.080196,0.030895,0.013852,0.005990,0.002790,0.001383,0.000435,0.000052,0.000003}; 
+  
+  for(int j=0;j<11;j++){
+    
+    cout<<Pt[j]<<"  "<<D2NDPtDy[j]<<"   "<<StatErrD2NDPtDy[j]<<"   "<<SystErrD2NDPtDy[j]<<endl;
+
+      
+      }
+  
+
+  TGraphErrors *PhotonRatePHENIXdata = new TGraphErrors(11,Pt,D2NDPtDy,ErrPt,StatErrD2NDPtDy);
+  PhotonRatePHENIXdata->SetMarkerStyle(20);
+  PhotonRatePHENIXdata->SetMarkerColor(kBlue+0);
+  PhotonRatePHENIXdata->SetMarkerSize(1.1);
+  PhotonRatePHENIXdata->GetYaxis()->SetTitleOffset(1.8);
+  PhotonRatePHENIXdata->GetYaxis()->SetRangeUser(0.000001,60.0);
+  TAxis *Xaxis1 = PhotonRatePHENIXdata->GetXaxis();
+  Xaxis1->SetLimits(0.0,5.2);
+   
+
+  PhotonRatePHENIXdata->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  PhotonRatePHENIXdata->GetYaxis()->SetTitle("#frac{1}{2#pi p_{T}}#frac{d^{2}N}{dp_{T}dy}[(GeV/c)^{-2}]");
+  
+  PhotonRatePHENIXdata->Draw("AP");
+
+    
+  
+  TBox *SystErrPhotonRate[11];
+  Double_t PtBound[12]=   {0.4, 0.60, 0.80,1.0,1.20, 1.40, 1.60, 1.80, 2.0,  2.5, 3.5, 5.0};
+  for(int j=0;j<11;j++){
+    SystErrPhotonRate[j] = new TBox(PtBound[j], D2NDPtDy[j]-SystErrD2NDPtDy[j], PtBound[j+1], D2NDPtDy[j]+SystErrD2NDPtDy[j]);
+  }
+  
+  for(int j=0;j<11;j++){
+    SystErrPhotonRate[j]->SetFillStyle(9001);
+    SystErrPhotonRate[j]->SetLineColor(kBlue);
+    SystErrPhotonRate[j]->Draw("same"); 
+  }
+    
+  TLatex *tb= new TLatex;
+  tb->SetNDC(); 
+  tb->SetTextAlign(12);
+  tb->SetTextColor(1);
+  tb->SetTextSize(0.040);
+  tb->DrawLatex(0.22,0.20,"AuAu #sqrt{s_{NN}} = 200GeV");
+  tb->DrawLatex(0.22,0.15,"40-60%");
+ 
+  //lgd->AddEntry(PhotonRatePHENIXdata,"Inclusive Photons", "P");
+  
+  
+  
+}
+
+
+void Draw_PHENIX_DirectPhotonRate6092_Pt(TLegend *lgd)
+{
+
+  
+  Double_t Pt[11]=   {0.50,0.70,0.90,1.10,1.30,1.50,1.70,1.90,2.25,3.00,4.25}; 
+  Double_t ErrPt[11]={0.0};
+  Double_t D2NDPtDy[11]={0.283798,0.036460,0.012077,0.008213,0.002898,0.001267,0.001107,0.000137,0.000045,0.000025,0.000007}; 
+  Double_t StatErrD2NDPtDy[11]={0.126140,0.025660,0.008446,0.003597,0.001647,0.000829,0.000481,0.000243,0.000076,0.000015,0.000004}; 
+  Double_t SystErrD2NDPtDy[11]={0.148048,0.039574,0.013316,0.005268,0.002167,0.000971,0.000490,0.000222,0.000074,0.000011,0.000001}; 
+  
+
+
+
+  for(int j=0;j<11;j++){
+    
+    cout<<Pt[j]<<"  "<<D2NDPtDy[j]<<"   "<<StatErrD2NDPtDy[j]<<"   "<<SystErrD2NDPtDy[j]<<endl;
+
+      
+      }
+  
+
+  TGraphErrors *PhotonRatePHENIXdata = new TGraphErrors(11,Pt,D2NDPtDy,ErrPt,StatErrD2NDPtDy);
+  PhotonRatePHENIXdata->SetMarkerStyle(20);
+  PhotonRatePHENIXdata->SetMarkerColor(kBlue+0);
+  PhotonRatePHENIXdata->SetMarkerSize(1.1);
+  PhotonRatePHENIXdata->GetYaxis()->SetTitleOffset(1.8);
+  PhotonRatePHENIXdata->GetYaxis()->SetRangeUser(0.000001,60.0);
+  TAxis *Xaxis1 = PhotonRatePHENIXdata->GetXaxis();
+  Xaxis1->SetLimits(0.0,5.2);
+   
+
+  PhotonRatePHENIXdata->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  PhotonRatePHENIXdata->GetYaxis()->SetTitle("#frac{1}{2#pi p_{T}}#frac{d^{2}N}{dp_{T}dy}[(GeV/c)^{-2}]");
+  
+  PhotonRatePHENIXdata->Draw("AP");
+
+    
+  
+  TBox *SystErrPhotonRate[11];
+  Double_t PtBound[12]=   {0.4, 0.60, 0.80,1.0,1.20, 1.40, 1.60, 1.80, 2.0,  2.5, 3.5, 5.0};
+  for(int j=0;j<11;j++){
+    SystErrPhotonRate[j] = new TBox(PtBound[j], D2NDPtDy[j]-SystErrD2NDPtDy[j], PtBound[j+1], D2NDPtDy[j]+SystErrD2NDPtDy[j]);
+  }
+  
+  for(int j=0;j<11;j++){
+    SystErrPhotonRate[j]->SetFillStyle(9001);
+    SystErrPhotonRate[j]->SetLineColor(kBlue);
+    SystErrPhotonRate[j]->Draw("same"); 
+  }
+    
+  TLatex *tb= new TLatex;
+  tb->SetNDC(); 
+  tb->SetTextAlign(12);
+  tb->SetTextColor(1);
+  tb->SetTextSize(0.040);
+  tb->DrawLatex(0.50,0.85,"AuAu #sqrt{s_{NN}} = 200GeV");
+  tb->DrawLatex(0.50,0.80,"60-92%");
+ 
+  //lgd->AddEntry(PhotonRatePHENIXdata,"Inclusive Photons", "P");
+  
+  
+  
+}
