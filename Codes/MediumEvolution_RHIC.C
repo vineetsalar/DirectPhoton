@@ -33,16 +33,21 @@ Double_t hbarc2 = hbarc*hbarc;
 Double_t hbarc3 = hbarc2*hbarc;
 
 
+
+
+//Change these parameters
 //Matter at extream condition
 //T0 is 550 - 580 MeV and tau0 is 0.3
 const Double_t mPi = 0.140; 
-const Double_t RPb = 7.11;  //1.2*TMath::Power(208,1.0/3.0)
-const Double_t R05 = 0.92*RPb;
-const Double_t tau0 = 0.3;
+const Double_t RAu = 6.98;  //1.2*TMath::Power(197,1.0/3.0)
+const Double_t R03 = 0.95*RAu;
+const Double_t tau0 = 0.6;
+const Double_t SS=5.0*1.5*700;
 
-//const Double_t SS=3.6*1.5*1600;
-const Double_t SS=5.0*1.5*1600;
-const Double_t Nf=2.5;
+
+
+//const Double_t Nf=2.5;
+const Double_t Nf=3.0;
 const Double_t aq = (7.0*Nf/60.0 + 16.0/90.0)*pi2;
 const Double_t ah = 4.5*pi2/90.0;
 
@@ -55,16 +60,17 @@ Double_t aT = 0.1;
 Double_t z0=0.0; //0
 Double_t vZ=1.0;     //1.0
 
-const Double_t VTau0 = (R05+0.5*aT*tau0*tau0)*(R05+0.5*aT*tau0*tau0)*(z0+vZ*tau0)*pi;
-const Double_t ss05 = SS/VTau0;
+const Double_t VTau0 = (R03+0.5*aT*tau0*tau0)*(R03+0.5*aT*tau0*tau0)*(z0+vZ*tau0)*pi;
+const Double_t ss03 = SS/VTau0;
 
 const Double_t T0=TMath::Power(SS/(4.0*aq*VTau0),1.0/3.0)*hbarc;
 const Double_t TC = 0.170;
 const Double_t TF = 0.140;
 
 //const Double_t tauf = pow(T0/TC, 3.)*tau0;
-const Double_t nPart0 = 393;
-const Double_t nColl0 = 1747;
+
+//const Double_t nPart0 = 358;
+//const Double_t nColl0 = ;//
 
 int NTau; double stepTau;
 double Tau[10000], TempTau[10000], fQGP[10000];
@@ -72,9 +78,11 @@ double Tau[10000], TempTau[10000], fQGP[10000];
 
 
 //======================== Function definations =============================//
+
+//These arrays are for PbPb at LHC energy
 // Dynamics 
 Double_t Npart(int BinLow, int BinHigh);
-Double_t NColl(int BinLow, int BinHigh);
+
 Double_t CalculateTandf(int Flag, Double_t T0Cent, Double_t R0Cent, Double_t tauCCent, Double_t tauhCent, Double_t taufCent,Double_t ssCent);
 Double_t CalculateTandf_Classic(int Flag, Double_t T0Cent, Double_t R0Cent, Double_t tauCCent, Double_t tauhCent, Double_t taufCent);
 Double_t TauToTemp_All(Int_t Flag, Double_t T0Cent, Double_t R0Cent, Double_t Tau);
@@ -92,7 +100,7 @@ TGraph *TempVsFQGP2 = (TGraph*)fileEOS->Get("TempVsFQGP2");
 
 
 
-void MediumEvolution()
+void MediumEvolution_RHIC()
 {
 
 
@@ -158,113 +166,57 @@ void MediumEvolution()
     }
 
 
-
+ TFile *rootfile = new TFile("temp_tau.root","Recreate");
 
   cout<<" simulating QGP evolution : "<<endl;
 
+
+  /// These arrays for RHIC energies
  // ================ dn/deta graph for making Temp as a function of nPart ==========================================//
-  Double_t NPartdNdEta[10] = {382.8,329.7,260.5,186.4,128.9,85.0,52.8,30.0,15.8};
-  Double_t Err_NPartdNdEta[10] = {3.1,4.6,4.4,3.9,3.3,2.6,2.0,1.3,0.6};
+  Double_t NPartdNdEta[11] = {358.0,331.0,298.0,256.0,217.0,183.0,152.0,124.0,103.0,83.0,65.0};
+  Double_t Err_NPartdNdEta[11] = {12.0,10.0,9.0,8.0,8.0,7.0,6.0,6.0,5.0,5.0,4.0};
   
-  Double_t dNdEtabyNpartby2[10] = {8.4,7.9,7.4,7.0,6.6,6.1,5.7,5.1,4.4};
-  Double_t Err_dNdEtabyNpartby2[10] = {0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.4};
+  Double_t dNdEtabyNpartby2[11] = {3.91,3.81,3.68,3.56,3.48,3.41,3.32,3.25,3.19,3.14,2.90};
+  Double_t Err_dNdEtabyNpartby2[11] = {0.20,0.18,0.18,0.18,0.18,0.18,0.19,0.19,0.21,0.22,0.22};
   
+
+
+
+
+
   TGraphErrors *grdNDetaNpart = new TGraphErrors(9,NPartdNdEta,dNdEtabyNpartby2,Err_NPartdNdEta,Err_dNdEtabyNpartby2);
   grdNDetaNpart->SetLineWidth(2);
   grdNDetaNpart->SetMarkerStyle(20);
-  grdNDetaNpart->GetYaxis()->SetRangeUser(3.5,9.0);
+  grdNDetaNpart->GetYaxis()->SetRangeUser(2.5,5.0);
   grdNDetaNpart->GetYaxis()->SetTitle("#frac{dN}{d#eta}/(#frac{N_{Part}}{2})");
   grdNDetaNpart->GetXaxis()->SetTitle("N_{Part}");
   
-  //new TCanvas;
-  //gPad->SetTicks();
-  //gPad->SetBottomMargin(0.14);
-  //grdNDetaNpart->Draw("AP");
-  //gPad->SaveAs("dNdEtaVsNpart.png");  
-  //gPad->SaveAs("dNdEtaVsNpart.eps");     
-  
-  TF1 *funDnDetaNPart = new TF1("funDnDetaNPart","[0]*TMath::Power(x,[1])/(0.5*x)",0.0,500);
-  funDnDetaNPart->SetParameters(1.317,1.190);
-  funDnDetaNPart->SetLineColor(4);
-  
-  TF1 *funTwoComp = new TF1("funTwoComp","[0]*( [1]*x + (1-[1])*([2] + [3]*x +[4]*x*x)) /(0.5*x)",0.0,500);
-  funTwoComp->SetLineColor(2);
-  funTwoComp->SetParameter(0,2.441);
-  funTwoComp->SetParameter(1,0.788);
-  funTwoComp->SetParameter(2,-13.4708);
-  funTwoComp->SetParameter(3,1.69143);
-  funTwoComp->SetParameter(4,0.00709679);
-
-  lcat[3] = new TLegend( 0.37,0.22,0.87,0.40);
-  lcat[3]->SetBorderSize(0);
-  lcat[3]->SetFillStyle(0);
-  lcat[3]->SetFillColor(0);
-  lcat[3]->SetTextSize(0.040);
-  lcat[3]->AddEntry(funDnDetaNPart,"#alpha N_{Part}^{#beta}","L");
-  lcat[3]->AddEntry(funTwoComp,"fN_{Part} + (1-f)N_{Coll}","L");
-
-  new TCanvas;
-  grdNDetaNpart->Fit("funDnDetaNPart","M","",10.0,400.0);
-  grdNDetaNpart->Fit("funTwoComp","M","",10.0,400.0);
-
-  grdNDetaNpart->Draw("AP");
-  funDnDetaNPart->Draw("same");
-  funTwoComp->Draw("same");
-  lcat[3]->Draw("same");
-  
-
-  // return;
-
-  Double_t TempNpart[400];
-  Double_t TempNpart3[400];
-  Double_t NpartVal[400];
-  
-  for(int i=0;i<=80;i++)
-    {
-      NpartVal[i]=i*5;
-      TempNpart[i]=T0*TMath::Power(funDnDetaNPart->Eval(NpartVal[i])/dNdEtabyNpartby2[0],1.0/3); //ALICE Func
-      TempNpart3[i]=T0*TMath::Power(funTwoComp->Eval(NpartVal[i])/dNdEtabyNpartby2[0],1.0/3); //Two Comp model
-    }
-
-  TGraph *grTempVsNpart = new TGraph(80, NpartVal,TempNpart);
-  grTempVsNpart->SetLineWidth(2);
-  grTempVsNpart->SetMarkerStyle(20);
-  grTempVsNpart->SetMarkerColor(4);
-  
-  grTempVsNpart->GetXaxis()->SetTitle("N_{Part}");
-  grTempVsNpart->GetYaxis()->SetTitle("T (GeV)");
-  grTempVsNpart->GetYaxis()->SetRangeUser(0.1,1.0);
-  
-  TGraph *grTempVsNpart3 = new TGraph(80, NpartVal,TempNpart3);
-  grTempVsNpart3->SetLineWidth(2);
-  grTempVsNpart3->SetMarkerStyle(20);
-  grTempVsNpart3->SetMarkerColor(2);
-
-
   new TCanvas;
   gPad->SetTicks();
-  grTempVsNpart->Draw("AP");
-  grTempVsNpart3->Draw("Psame");
-  lcat[3]->Draw("same");
-  gPad->SaveAs("NpartVsTemp.png");  
-  gPad->SaveAs("NpartVsTemp.eps");  
-  
-  
+  gPad->SetBottomMargin(0.14);
+  grdNDetaNpart->Draw("AP");
+  gPad->SaveAs("dNdEtaVsNpart.png");  
+  gPad->SaveAs("dNdEtaVsNpart.eps");     
+    
   //================================= Temp Vs Tau Graphs ====================================//
-  
-  Double_t T0Cen = T0*TMath::Power((funTwoComp->Eval(Npart(0,2)))/dNdEtabyNpartby2[0],1.0/3.0);
-  Double_t ssCen = ss05*(funTwoComp->Eval(Npart(0,2))/dNdEtabyNpartby2[0]);  
+  //Put EVAL function on graph
+
+  cout << "*--*--*-**-**-***-*--*-**-*-*-*-**-*-*-***-**+--" << endl;
+  cout<<Npart(0,3) <<"    "<<grdNDetaNpart->Eval(Npart(0,3))<<endl;
+
+  Double_t T0Cen = T0*TMath::Power((grdNDetaNpart->Eval(Npart(0,3)))/dNdEtabyNpartby2[0],1.0/3.0);
+  Double_t ssCen = ss03*(grdNDetaNpart->Eval(Npart(0,3))/dNdEtabyNpartby2[0]);  
  
 
   double TauL[10000], TempTauL[10000], fQGPL[10000];
   int NTauL;
-  Double_t TauC1=Tau0ToTauC(1,T0Cen,R05);
-  Double_t TauH1 = TauCToTauh(1,TauC1,R05);
-  Double_t TauF1 =TauhToTauf(1,TauH1,R05);
-  CalculateTandf(1, T0Cen, R05, TauC1, TauH1,TauF1,ssCen);
+  Double_t TauC1=Tau0ToTauC(1,T0Cen,R03);
+  Double_t TauH1 = TauCToTauh(1,TauC1,R03);
+  Double_t TauF1 =TauhToTauf(1,TauH1,R03);
+  CalculateTandf(1, T0Cen, R03, TauC1, TauH1,TauF1,ssCen);
   
   NTauL= NTau;
-  cout<<" Long " << T0Cen<<"  "<<R05<<"  "<<TauC1<<"  "<<TauH1<<"   "<<TauF1<<endl;
+  cout<<" Long " << T0Cen<<"  "<<R03<<"  "<<TauC1<<"  "<<TauH1<<"   "<<TauF1<<endl;
   for(int i=0;i<NTauL;i++){
     TauL[i]=Tau[i];
     TempTauL[i] = TempTau[i];
@@ -274,10 +226,10 @@ void MediumEvolution()
   double TauC[10000], TempTauC[10000], fQGPC[10000];
   int NTauC;  
 
-  Double_t TauC2=Tau0ToTauC(2,T0Cen,R05);
-  Double_t TauH2 = TauCToTauh(2,TauC2,R05);
-  Double_t TauF2=TauhToTauf(2, TauH2, R05);
-  CalculateTandf(2,T0Cen,R05,TauC2,TauH2,TauF2,ssCen);
+  Double_t TauC2=Tau0ToTauC(2,T0Cen,R03);
+  Double_t TauH2 = TauCToTauh(2,TauC2,R03);
+  Double_t TauF2=TauhToTauf(2, TauH2, R03);
+  CalculateTandf(2,T0Cen,R03,TauC2,TauH2,TauF2,ssCen);
   NTauC= NTau;
   for(int i=0;i<NTau;i++){
     TauC[i]=Tau[i];
@@ -285,7 +237,7 @@ void MediumEvolution()
     fQGPC[i]=fQGP[i];
   }
 
-  cout<<" Cylind  " << T0Cen<<"  "<<R05<<"  "<<TauC2<<"  "<<TauH2<<"  "<<TauF2<<endl;
+  cout<<" Cylind  " << T0Cen<<"  "<<R03<<"  "<<TauC2<<"  "<<TauH2<<"  "<<TauF2<<endl;
 
 
   double TauLatt[10000], TempTauLatt[10000];
@@ -294,7 +246,7 @@ void MediumEvolution()
 
   cout<<" Calculating Lattice equation of state "<<endl;
   NTau=0;
-  CalculateTandf(3,T0Cen,R05,TauC2,TauH2,TauF2,ssCen);
+  CalculateTandf(3,T0Cen,R03,TauC2,TauH2,TauF2,ssCen);
 
  
   cout<<" NTau "<<NTau<<" ssCen "<<ssCen<<endl;
@@ -303,7 +255,7 @@ void MediumEvolution()
     TauLatt[i]=Tau[i];
     TempTauLatt[i]=TempTau[i];
     fQGPLatt[i]=fQGP[i];
-    cout<<Tau[i]<<" Lattice  "<<TempTau[i]<<endl;
+    cout<<Tau[i]<< "      " << fQGPLatt[i] <<" Lattice  "<<TempTau[i]<<endl;
   }
     
  
@@ -333,6 +285,7 @@ void MediumEvolution()
 
   new TCanvas;
   grFQGPVsTauAnaC->Draw("AL");
+  grFQGPVsTauAnaC->Write();
   //grTempVsTauAnaC->Draw("AL");
 
 
@@ -392,7 +345,7 @@ void MediumEvolution()
   grFQGPVsTau->SetLineStyle(1);
   grFQGPVsTau->GetYaxis()->SetTitle("QGP fraction");
   grFQGPVsTau->GetXaxis()->SetTitle("#tau (fm)");
-
+  
   TGraph *grFQGPVsTau2 = new TGraph(NTauC,TauC,fQGPC);
   grFQGPVsTau2->SetName("grFQGPVsTauC");
   grFQGPVsTau2->SetTitle("grFQGPVsTauC");
@@ -428,19 +381,20 @@ void MediumEvolution()
   gPad->SaveAs("TFig1b_auVsFQGP.pdf");
   
   //return 
+  grTempVsTauAnaC->Write();
   
-
-
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+//for 0-5%
+
+//0-3-6-10-15-20-25-30-35-40-45-50
+
+//change these arrays for AuAu at 200 GeV
 Double_t Npart(int BinLow, int BinHigh)
 {
-  Double_t NpartArray[40]={393.622,368.96,342.32,316.49,293.49,271.98,249.65,230.53,212.28,194.50,178.54,
-			 163.25,149.05,135.92,123.28,111.67,100.79,90.71,80.93,72.60,64.15,56.61,49.95,
-			 43.39,37.83,32.70,27.86,23.79,20.20,16.85,14.04,11.60,9.55,7.72,6.44,4.96,4.22,
-			 3.50,3.17,2.79};
+  Double_t NpartArray[40]={358.0,331.0,298.0,256.0,217.0,183.0,152.0,124.0,103.0,83.0,65.0};
   Double_t sum=0;
   for(int i=BinLow;i<BinHigh;i++){
     sum+=NpartArray[i];
@@ -448,27 +402,6 @@ Double_t Npart(int BinLow, int BinHigh)
   Double_t NPart = sum/(BinHigh-BinLow);
   return NPart;
 }
-
-Double_t NColl(int BinLow, int BinHigh)
-{
-  Double_t NCollArray[40]={1747.8600, 1567.5300, 1388.3900, 1231.7700, 1098.2000, 980.4390, 861.6090, 766.0420, 676.5150, 593.4730,
-			   521.9120, 456.5420, 398.5460, 346.6470, 299.3050, 258.3440, 221.2160, 188.6770, 158.9860, 134.7000,
-			   112.5470, 93.4537, 77.9314, 63.5031, 52.0469, 42.3542, 33.9204, 27.3163, 21.8028, 17.2037,
-			   13.5881, 10.6538, 8.3555, 6.4089, 5.1334, 3.7322, 3.0663, 2.4193, 2.1190, 1.7695};
-  
-  Double_t sum=0;
-  for(int i=BinLow;i<BinHigh;i++){
-    sum+=NCollArray[i];
-  }
-  Double_t NColl = sum/(BinHigh-BinLow);
-  return NColl;
-}
-
-
-
-
-
-
 
 Double_t CalculateTandf_LatticeEOS(Double_t ssCent, Double_t R0Cent)
 {
