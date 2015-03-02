@@ -87,6 +87,7 @@ Double_t aT = 0.1;
 Double_t z0=0.0; //0
 Double_t vZ=1.0;     //1.0
 
+
 const Double_t VTau0 = (R05+0.5*aT*tau0*tau0)*(R05+0.5*aT*tau0*tau0)*(z0+vZ*tau0)*pi;
 const Double_t ss05 = SS/VTau0;
 
@@ -384,11 +385,6 @@ void PhotonHist()
   legd5->AddEntry(grfDirectPhotonHadron,"Hadron","L");
 
 
-  
-
-
-
-
   new TCanvas;
   gPad->SetTicks();
   gPad->SetLogy();
@@ -488,7 +484,6 @@ Double_t RatePhoton(Double_t RCent, Double_t Pt)
   RPhoton =Area*(RateQGP_IntTau(Pt) + RateHadron_IntTau(Pt));
 
   return RPhoton;
-
 
 }
 

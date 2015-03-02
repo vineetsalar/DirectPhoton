@@ -62,6 +62,7 @@ const Double_t Nf=2.5;
 const Double_t aq = (7.0*Nf/60.0 + 16.0/90.0)*pi2;
 const Double_t ah = 4.5*pi2/90.0;
 
+//Double_t aT = 0.1;
 Double_t aT = 0.1;
 Double_t z0=0.0; //0
 Double_t vZ=1.0;     //1.0
@@ -104,12 +105,15 @@ double Steptime;
 
 //Direct Photon
 //Double_t RatePhoton(Double_t RCent, Double_t Pt);
-Double_t RateQGP_IntTau(Double_t Pt);
+Double_t RateQGP_IntTau(Double_t Pt, Double_t RCent);
 Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T);
 Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf);
-Double_t RateHadron_IntTau(Double_t Pt);
+
+
+Double_t RateHadron_IntTau(Double_t Pt, Double_t RCent);
 Double_t RateHadron_IntEtaf(Double_t Pt, Double_t T);
 Double_t RateHadron(Double_t Pt, Double_t T, Double_t Etaf);
+
 Double_t RateQCD_IntTau(Double_t Pt);
 Double_t RateQCD(Double_t Pt);
 
@@ -149,30 +153,20 @@ void PhotonHistRHIC()
   
   // ================== Checking Data Graphs ===============================//
   cout<<" ========== checking data graphs =================================="<<endl;
-
-  Draw_AllDataGraphs();
+  //Draw_AllDataGraphs();
 
   // return;
-
-
-
-
-
-
-
-
-
   
   cout<<" simulating QGP evolution : "<<endl;
 
   // ================ dn/deta graph for making Temp as a function of nPart ==========================================//
- Double_t NPartdNdEta[11] = {358.0,331.0,298.0,256.0,217.0,183.0,152.0,124.0,103.0,83.0,65.0};
+  Double_t NPartdNdEta[11] = {358.0,331.0,298.0,256.0,217.0,183.0,152.0,124.0,103.0,83.0,65.0};
   Double_t Err_NPartdNdEta[11] = {12.0,10.0,9.0,8.0,8.0,7.0,6.0,6.0,5.0,5.0,4.0};
   
   Double_t dNdEtabyNpartby2[11] = {3.91,3.81,3.68,3.56,3.48,3.41,3.32,3.25,3.19,3.14,2.90};
   Double_t Err_dNdEtabyNpartby2[11] = {0.20,0.18,0.18,0.18,0.18,0.18,0.19,0.19,0.21,0.22,0.22}; 
-
-
+  
+  
   
   TGraphErrors *grdNDetaNpart = new TGraphErrors(11,NPartdNdEta,dNdEtabyNpartby2,Err_NPartdNdEta,Err_dNdEtabyNpartby2);
   grdNDetaNpart->SetLineWidth(2);
@@ -186,15 +180,10 @@ void PhotonHistRHIC()
   double TauLatt[10000], TempTauLatt[10000];
   double fQGPLatt[10000];
 
-  
-  //Double_t R0010 = R03*TMath::Power( (Npart(0,3)/nPart03) ,0.5);
-  //Double_t ss010 = ss03*(grdNDetaNpart->Eval(Npart(0,3))/dNdEtabyNpartby2[0]);
-
   Double_t R0020 = R03*TMath::Power( (Npart(0,5)/nPart03) ,0.5);
   Double_t ss020 = ss03*(grdNDetaNpart->Eval(Npart(0,5))/dNdEtabyNpartby2[0]);
 
   Ntime=0;
-  //CalculateTandf_LatticeEOS(ss010, R0010);
   CalculateTandf_LatticeEOS(ss020, R0020);
 
   //cout<<" Ntime "<<Ntime <<" ss010 "<<ss010<<"  R0010: "<<R0010<<endl;
@@ -230,37 +219,77 @@ void PhotonHistRHIC()
   new TCanvas;
   grFQGPVsTauAnaC->Draw("AL");
 
-  //0-3-6-10-15-20-25-30-35-40-45-50
 
-  // Double_t R0020 = R03*TMath::Power( (Npart(0,5)/nPart03) ,0.5);
+
+  //=============================== PQCD Direct Photon ===================================//
+  
+  Double_t tPt[1000]={0.0};
+  Double_t DirectPhotonPQCD[1000]={0.0};
+
+  Double_t tPtMin =0.1;
+  Double_t tPtMax =12.0;
+  Double_t tPtStep =0.1;
+  Int_t tNPt = (tPtMax - tPtMin)/tPtStep;
+  for(int i =0;i<tNPt;i++)
+    {
+      tPt[i]=tPtMin+i*tPtStep;
+      DirectPhotonPQCD[i] = RateQCD(tPt[i]);
+    }
+
+
+  TGraph *grfDirectPhotonPQCD = new TGraph(tNPt,tPt,DirectPhotonPQCD);
+  grfDirectPhotonPQCD->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfDirectPhotonPQCD->GetYaxis()->SetTitle("#frac{1}{2#pi p_{T}}#frac{d^{2}#sigma}{dp_{T}dy}[(mb.GeV/c)^{-2}]");
+  grfDirectPhotonPQCD->GetYaxis()->SetTitleOffset(1.8);
+  grfDirectPhotonPQCD->SetLineColor(4);
+
+
+  new TCanvas;
+  gPad->SetLogy();
+  gPad->SetTicks();
+  grfDirectPhotonPQCD->Draw("AL");
+
+
+
+
+  
+  //Double_t R0020 = R03*TMath::Power( (Npart(0,5)/nPart03) ,0.5);
   //Double_t ss020 = ss03*(grdNDetaNpart->Eval(Npart(0,5))/dNdEtabyNpartby2[0]);
   
   //Ntime=0;
   //CalculateTandf_LatticeEOS(ss020, R0020);
+  
+  //0-20-40-60-92
+  Double_t NCollPhenix[4]={779.0,297.0,91.0,15.0};
+  Double_t Sigmapp = 42.2; //mb inelastic
 
+  //Double_t NPartPhenix[4]={280.0,140.0,60.0,18.0};
+  //Double_t NCollPhenix[4]={1.0,1.0,1.0,1.0};
 
   Double_t PtMin =0.1;
   Double_t PtMax =6.0;
   Double_t PtStep =0.1;
   Int_t NPt = (PtMax - PtMin)/PtStep;
   
-  
   Double_t Pt[100]={0.0};
   Double_t DirectPhoton1[100]={0.0};
   Double_t DirectPhotonQGP1[100]={0.0};
   Double_t DirectPhotonHadron1[100]={0.0};
+  Double_t DirectPhotonPQCD1[100]={0.0};
 
   cout<<"Pt:  "<<"         "<<"Hadron      "<<"QGP       "<<"RatePhoton"<<endl;
-  
 
+  cout<<"R0020  "<<R0020<<endl;
+ 
   for(int i =0;i<NPt;i++)
     {
       Pt[i]=PtMin+i*PtStep;
       
-      DirectPhotonQGP1[i] = pi*R0020*R0020*RateQGP_IntTau(Pt[i]);
-      DirectPhotonHadron1[i] = pi*R0020*R0020*RateHadron_IntTau(Pt[i]);
-      DirectPhoton1[i] =  DirectPhotonQGP1[i] + DirectPhotonHadron1[i];
-      
+      DirectPhotonQGP1[i] = RateQGP_IntTau(Pt[i],R0020);
+      DirectPhotonHadron1[i] = RateHadron_IntTau(Pt[i],R0020);
+      DirectPhotonPQCD1[i] = NCollPhenix[0]*RateQCD(Pt[i])/Sigmapp;
+      DirectPhoton1[i] =  DirectPhotonPQCD1[i] + DirectPhotonQGP1[i] + DirectPhotonHadron1[i];
+
       cout<<Pt[i]<<"    "<<DirectPhotonHadron1[i]<<"    "<<DirectPhotonQGP1[i]<<"   "<<DirectPhoton1[i]<<endl;
     }  
 
@@ -279,6 +308,15 @@ void PhotonHistRHIC()
   grfDirectPhotonHadron1->SetLineColor(1);
 
 
+
+  TGraph *grfDirectPhotonPQCD1 = new TGraph(NPt,Pt,DirectPhotonPQCD1);
+  grfDirectPhotonPQCD1->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfDirectPhotonPQCD1->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  grfDirectPhotonPQCD1->GetYaxis()->SetTitleOffset(1.4);
+  grfDirectPhotonPQCD1->SetLineColor(4);
+
+
+
   TGraph *grfDirectPhoton1 = new TGraph(NPt,Pt,DirectPhoton1);
   grfDirectPhoton1->GetXaxis()->SetTitle("p_{T}[GeV/c]");
   grfDirectPhoton1->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
@@ -293,7 +331,7 @@ void PhotonHistRHIC()
   legd5->AddEntry(grfDirectPhoton1,"Sum","L");
   legd5->AddEntry(grfDirectPhotonQGP1,"QGP","L");
   legd5->AddEntry(grfDirectPhotonHadron1,"Hadron","L");
-
+  legd5->AddEntry(grfDirectPhotonPQCD1,"pp*N_{coll}","L");
 
   new TCanvas;
   gPad->SetTicks();
@@ -304,8 +342,12 @@ void PhotonHistRHIC()
   grfDirectPhoton1->Draw("Lsame");
   grfDirectPhotonHadron1->Draw("Lsame");
   grfDirectPhotonQGP1->Draw("Lsame");
+  grfDirectPhotonPQCD1->Draw("Lsame"); 
   legd5->Draw("Lsame");
 
+
+
+  //return;
   //====================================== 20-40% ======================================//
   //0-3-6-10-15-20-25-30-35-40-45-50-55-60-65-70-75-80-100 
   Double_t R02040 = R03*TMath::Power( (Npart(5,9)/nPart03) ,0.5);
@@ -315,17 +357,19 @@ void PhotonHistRHIC()
   
   Double_t DirectPhoton2[100]={0.0};
   Double_t DirectPhotonQGP2[100]={0.0};
+  Double_t DirectPhotonPQCD2[100]={0.0};
   Double_t DirectPhotonHadron2[100]={0.0};
-
-    
+   
 
   for(int i =0;i<NPt;i++)
     {
       Pt[i]=PtMin+i*PtStep;
       
-      DirectPhotonQGP2[i] = pi*R02040*R02040*RateQGP_IntTau(Pt[i]);
-      DirectPhotonHadron2[i] = pi*R02040*R02040*RateHadron_IntTau(Pt[i]);
-      DirectPhoton2[i] =  DirectPhotonQGP2[i] + DirectPhotonHadron2[i];
+      DirectPhotonQGP2[i] = RateQGP_IntTau(Pt[i],R02040);
+      DirectPhotonHadron2[i] = RateHadron_IntTau(Pt[i],R02040);
+      DirectPhotonPQCD2[i] = NCollPhenix[1]*RateQCD(Pt[i])/Sigmapp;
+
+      DirectPhoton2[i] =  DirectPhotonPQCD2[i] + DirectPhotonQGP2[i] + DirectPhotonHadron2[i];
       
       cout<<Pt[i]<<"    "<<DirectPhotonHadron2[i]<<"    "<<DirectPhotonQGP2[i]<<"   "<<DirectPhoton2[i]<<endl;
     }  
@@ -344,6 +388,14 @@ void PhotonHistRHIC()
   grfDirectPhotonHadron2->GetYaxis()->SetTitleOffset(1.4);
   grfDirectPhotonHadron2->SetLineColor(1);
 
+  TGraph *grfDirectPhotonPQCD2 = new TGraph(NPt,Pt,DirectPhotonPQCD2);
+  grfDirectPhotonPQCD2->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfDirectPhotonPQCD2->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  grfDirectPhotonPQCD2->GetYaxis()->SetTitleOffset(1.4);
+  grfDirectPhotonPQCD2->SetLineColor(4);
+
+
+
 
   TGraph *grfDirectPhoton2 = new TGraph(NPt,Pt,DirectPhoton2);
   grfDirectPhoton2->GetXaxis()->SetTitle("p_{T}[GeV/c]");
@@ -361,6 +413,7 @@ void PhotonHistRHIC()
   grfDirectPhoton2->Draw("Lsame");
   grfDirectPhotonHadron2->Draw("Lsame");
   grfDirectPhotonQGP2->Draw("Lsame");
+  grfDirectPhotonPQCD2->Draw("Lsame");
   legd5->Draw("Lsame");
 
   
@@ -375,6 +428,7 @@ void PhotonHistRHIC()
   Double_t DirectPhoton3[100]={0.0};
   Double_t DirectPhotonQGP3[100]={0.0};
   Double_t DirectPhotonHadron3[100]={0.0};
+  Double_t DirectPhotonPQCD3[100]={0.0};
 
     
 
@@ -382,9 +436,10 @@ void PhotonHistRHIC()
     {
       Pt[i]=PtMin+i*PtStep;
       
-      DirectPhotonQGP3[i] = pi*R04060*R04060*RateQGP_IntTau(Pt[i]);
-      DirectPhotonHadron3[i] = pi*R04060*R04060*RateHadron_IntTau(Pt[i]);
-      DirectPhoton3[i] =  DirectPhotonQGP3[i] + DirectPhotonHadron3[i];
+      DirectPhotonQGP3[i] = RateQGP_IntTau(Pt[i],R04060);
+      DirectPhotonHadron3[i] = RateHadron_IntTau(Pt[i],R04060);
+      DirectPhotonPQCD3[i] = NCollPhenix[2]*RateQCD(Pt[i])/Sigmapp;
+      DirectPhoton3[i] =  DirectPhotonPQCD3[i] + DirectPhotonQGP3[i] + DirectPhotonHadron3[i];
       
       cout<<Pt[i]<<"    "<<DirectPhotonHadron3[i]<<"    "<<DirectPhotonQGP3[i]<<"   "<<DirectPhoton3[i]<<endl;
     }  
@@ -403,6 +458,12 @@ void PhotonHistRHIC()
   grfDirectPhotonHadron3->GetYaxis()->SetTitleOffset(1.4);
   grfDirectPhotonHadron3->SetLineColor(1);
 
+  TGraph *grfDirectPhotonPQCD3 = new TGraph(NPt,Pt,DirectPhotonPQCD3);
+  grfDirectPhotonPQCD3->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfDirectPhotonPQCD3->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  grfDirectPhotonPQCD3->GetYaxis()->SetTitleOffset(1.4);
+  grfDirectPhotonPQCD3->SetLineColor(4);
+
 
   TGraph *grfDirectPhoton3 = new TGraph(NPt,Pt,DirectPhoton3);
   grfDirectPhoton3->GetXaxis()->SetTitle("p_{T}[GeV/c]");
@@ -420,6 +481,7 @@ void PhotonHistRHIC()
   grfDirectPhoton3->Draw("Lsame");
   grfDirectPhotonHadron3->Draw("Lsame");
   grfDirectPhotonQGP3->Draw("Lsame");
+  grfDirectPhotonPQCD3->Draw("Lsame");
   legd5->Draw("Lsame");
 
 
@@ -434,17 +496,19 @@ void PhotonHistRHIC()
 
   Double_t DirectPhoton4[100]={0.0};
   Double_t DirectPhotonQGP4[100]={0.0};
+  Double_t DirectPhotonPQCD4[100]={0.0};
   Double_t DirectPhotonHadron4[100]={0.0};
-
     
 
   for(int i =0;i<NPt;i++)
     {
       Pt[i]=PtMin+i*PtStep;
       
-      DirectPhotonQGP4[i] = pi*R060100*R060100*RateQGP_IntTau(Pt[i]);
-      DirectPhotonHadron4[i] = pi*R060100*R060100*RateHadron_IntTau(Pt[i]);
-      DirectPhoton4[i] =  DirectPhotonQGP4[i] + DirectPhotonHadron4[i];
+      DirectPhotonQGP4[i] = RateQGP_IntTau(Pt[i],R060100);
+      DirectPhotonHadron4[i] = RateHadron_IntTau(Pt[i],R060100);
+      DirectPhotonPQCD4[i] = NCollPhenix[3]*RateQCD(Pt[i])/Sigmapp;
+
+      DirectPhoton4[i] =  DirectPhotonPQCD4[i] + DirectPhotonQGP4[i] + DirectPhotonHadron4[i];
       
       cout<<Pt[i]<<"    "<<DirectPhotonHadron4[i]<<"    "<<DirectPhotonQGP4[i]<<"   "<<DirectPhoton4[i]<<endl;
     }  
@@ -463,6 +527,12 @@ void PhotonHistRHIC()
   grfDirectPhotonHadron4->GetYaxis()->SetTitleOffset(1.4);
   grfDirectPhotonHadron4->SetLineColor(1);
 
+  TGraph *grfDirectPhotonPQCD4 = new TGraph(NPt,Pt,DirectPhotonPQCD3);
+  grfDirectPhotonPQCD4->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfDirectPhotonPQCD4->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  grfDirectPhotonPQCD4->GetYaxis()->SetTitleOffset(1.4);
+  grfDirectPhotonPQCD4->SetLineColor(4);
+
 
   TGraph *grfDirectPhoton4 = new TGraph(NPt,Pt,DirectPhoton4);
   grfDirectPhoton4->GetXaxis()->SetTitle("p_{T}[GeV/c]");
@@ -480,20 +550,8 @@ void PhotonHistRHIC()
   grfDirectPhoton4->Draw("Lsame");
   grfDirectPhotonHadron4->Draw("Lsame");
   grfDirectPhotonQGP4->Draw("Lsame");
+  grfDirectPhotonPQCD4->Draw("Lsame");
   legd5->Draw("Lsame");
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -586,16 +644,20 @@ Double_t RatePhoton(Double_t RCent, Double_t Pt)
 */
 
 
-Double_t RateQGP_IntTau(Double_t Pt)
+Double_t RateQGP_IntTau(Double_t Pt, Double_t RCent)
 {
+
   Double_t Sum =0.0;
+  Double_t VTau =0.0;
 
   //cout<<Ntime<<endl;  
+  //const Double_t VTau0 = (R03+0.5*aT*tau0*tau0)*(R03+0.5*aT*tau0*tau0)*(z0+vZ*tau0)*pi;
 
   for(int i =0;i<Ntime;i++)
     {
-      //h[i]=0.0;
-      Sum = Sum + RateQGP_IntEtaf(Pt,Temp[i])*(1-h[i])*tau[i]; 
+
+      VTau = (RCent+0.5*aT*tau[i]*tau[i])*(RCent+0.5*aT*tau[i]*tau[i])*(z0+vZ*tau[i])*pi;
+      Sum = Sum + RateQGP_IntEtaf(Pt,Temp[i])*(1-h[i])*VTau; 
       
       //cout<<Pt<<"  "<<tau[i]<<"  "<<Temp[i]<<"  "<<h[i]<<endl;
       //cout<<RateQGP_IntEtaf(Pt,Temp[i])<<endl;
@@ -657,13 +719,14 @@ Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf)
 
 // ================================= Rate Hadron ==============================//
 
-Double_t RateHadron_IntTau(Double_t Pt)
+Double_t RateHadron_IntTau(Double_t Pt, Double_t RCent)
 {
   Double_t Sum =0.0;
-
+  Double_t VTau =0.0;
   for(int i =0;i<Ntime;i++)
     {
-      Sum = Sum + RateHadron_IntEtaf(Pt,Temp[i])*h[i]*tau[i]; 
+      VTau = (RCent+0.5*aT*tau[i]*tau[i])*(RCent+0.5*aT*tau[i]*tau[i])*(z0+vZ*tau[i])*pi;
+      Sum = Sum + RateHadron_IntEtaf(Pt,Temp[i])*h[i]*VTau; 
 
     }
 
@@ -712,11 +775,11 @@ Double_t RateHadron(Double_t Pt, Double_t T, Double_t Etaf)
 
 
 
-
+//not used
 Double_t RateQCD_IntTau(Double_t Pt)
 {
   Double_t Sum =0.0;
-  Double_t IntEtaf = 2.0;
+  Double_t IntEtaf = 8.0;
 
   //Double_t tau[10000], Temp[10000], h[10000];
   //Int_t Ntime;
@@ -733,25 +796,37 @@ Double_t RateQCD_IntTau(Double_t Pt)
 
 }
 
-
 Double_t RateQCD(Double_t Pt)
 {
+  /*
   Double_t a = -4.1506;
   Double_t b = -1.9845;
   Double_t c = 0.0744;
   Double_t d =-0.0383;
-
   Double_t RQCD =0.0;
   RQCD = TMath::Exp(a+b*Pt+c*Pt*Pt+d*Pt*Pt*Pt);
   return RQCD;
+  */
 
+  Double_t a = 0.0083;
+  Double_t b = 2.26;
+  Double_t c = 3.45;
+  Double_t PtFac =0.0;
+  PtFac = (1.0 + ((Pt*Pt)/b));
+  
+  Double_t RQCD =0.0;
+  RQCD = a*TMath::Power(PtFac,-c);
+  return RQCD;
 
 }
 
 
 
-// ===================================== Direct Photon Graphs (PHENIX) =======================================//
 
+
+
+
+// ===================================== Direct Photon Graphs (PHENIX) =======================================//
 void Draw_AllDataGraphs()
 {
  
@@ -793,13 +868,6 @@ void Draw_AllDataGraphs()
 
   legend_ratio->Draw("same");
 }
-
-
-
-
-
-
-
 
 
 
@@ -926,31 +994,14 @@ void Draw_PHENIX_DirectPhotonRate2040_Pt(TLegend *lgd)
   
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 void Draw_PHENIX_DirectPhotonRate4060_Pt(TLegend *lgd)
 {
-
-  
+ 
   Double_t Pt[11]=   {0.50,0.70,0.90,1.10,1.30,1.50,1.70,1.90,2.25,3.00,4.25}; 
   Double_t ErrPt[11]={0.0};
   Double_t D2NDPtDy[11]={2.064060,0.530987,0.168944,0.061616,0.041359,0.014628,0.006184,0.003108,0.000850,0.000095,0.000008}; 
   Double_t StatErrD2NDPtDy[11]={0.615983,0.141643,0.047410,0.018912,0.009241,0.004274,0.002196,0.001249,0.000359,0.000054,0.000007}; 
   Double_t SystErrD2NDPtDy[11]={0.794669,0.232527,0.080196,0.030895,0.013852,0.005990,0.002790,0.001383,0.000435,0.000052,0.000003}; 
-  
-  //for(int j=0;j<11;j++){
-  //cout<<Pt[j]<<"  "<<D2NDPtDy[j]<<"   "<<StatErrD2NDPtDy[j]<<"   "<<SystErrD2NDPtDy[j]<<endl;
-  //}
   
 
   TGraphErrors *PhotonRatePHENIXdata = new TGraphErrors(11,Pt,D2NDPtDy,ErrPt,StatErrD2NDPtDy);
@@ -992,8 +1043,7 @@ void Draw_PHENIX_DirectPhotonRate4060_Pt(TLegend *lgd)
  
   //lgd->AddEntry(PhotonRatePHENIXdata,"Inclusive Photons", "P");
   
-  
-  
+ 
 }
 
 
@@ -1006,13 +1056,6 @@ void Draw_PHENIX_DirectPhotonRate6092_Pt(TLegend *lgd)
   Double_t D2NDPtDy[11]={0.283798,0.036460,0.012077,0.008213,0.002898,0.001267,0.001107,0.000137,0.000045,0.000025,0.000007}; 
   Double_t StatErrD2NDPtDy[11]={0.126140,0.025660,0.008446,0.003597,0.001647,0.000829,0.000481,0.000243,0.000076,0.000015,0.000004}; 
   Double_t SystErrD2NDPtDy[11]={0.148048,0.039574,0.013316,0.005268,0.002167,0.000971,0.000490,0.000222,0.000074,0.000011,0.000001}; 
-  
-
-
-
-  //for(int j=0;j<11;j++){
-  // cout<<Pt[j]<<"  "<<D2NDPtDy[j]<<"   "<<StatErrD2NDPtDy[j]<<"   "<<SystErrD2NDPtDy[j]<<endl;
-  //  }
   
 
   TGraphErrors *PhotonRatePHENIXdata = new TGraphErrors(11,Pt,D2NDPtDy,ErrPt,StatErrD2NDPtDy);
