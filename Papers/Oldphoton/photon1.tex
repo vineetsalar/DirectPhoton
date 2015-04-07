@@ -1,0 +1,487 @@
+\documentstyle[aps,preprint,psfig]{revtex}
+
+\renewcommand{\arraystretch}{1.25}
+\newcommand{\figcaptionwidth}{15.cm}
+\newcommand{\tabcaptionwidth}{13.75cm}
+
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\eea}{\end{eqnarray}}
+
+\newcommand{\benn}{\begin{displaymath}}
+\newcommand{\eenn}{\end{displaymath}}
+
+\newcommand{\beann}{\begin{eqnarray*}}
+\newcommand{\eeann}{\end{eqnarray*}}
+
+\newcommand{\befig}{\begin{figure}}
+\newcommand{\efig}{\end{figure}}
+
+\newcommand{\inv}{\frac{1}}
+
+\newcommand{\fm}{\mbox{fm}}
+\newcommand{\MeV}{\mbox{MeV}}
+\newcommand{\GeV}{\mbox{GeV}}
+\newcommand{\TeV}{\mbox{TeV}}
+
+\newcommand{\dhline}{\hline\hline}
+
+
+
+\begin{document}
+
+\begin{center}
+{\large \bf Dynamics of quark-hadron phase transition
+            and SPS photon and dilepton data}\\
+{Prashant Shukla}\\
+{\it Nuclear Physics Division,\\
+ Bhabha Atomic Research Center, Mumbai 400085, India}
+\end{center}
+
+\begin{abstract}
+
+   The photon and dilepton distributions have been calculated 
+asuuming quark gluon plasma (QGP) formed at CERN energy which undergoes 
+a first order phase transition to hadron phase. Both photon and dilepton 
+data at CERN are found to be consistent with scenario of a fast
+hadronization which coincides with freeze out.
+  
+  
+\noindent
+{\it Keywords}: Quark-Gluon Plasma,
+Relativistic Heavy-Ion Collisions, Photon Production, 
+Dilepton Production
+
+\medskip
+
+\noindent
+{\it PACS numbers}: 12.38.Mh, 25.75.-q, 05.70.Fh
+
+\end{abstract}
+
+\section{Introduction} \label{Introduction}
+   The motivation behind colliding heavy ions at relativistic
+energies is to study the properties of strongly interacting matter at
+high temperature where a phase transition to Quark Gluon Plasma is 
+expected. With this aim, Pb+Pb collision experiments at
+$\sqrt(s)=17.6A$ GEV have been carried out at CERN SPS giving a 
+variety of data on electromagnetic and hadronic observables
+[For a review see \cite{ESKOLA}]. 
+   The most interesting are the electromagtic
+probes \cite{WA98_2000,CERES}, which are sensitive to the various stages 
+of the evolution of the system and may contain the information about
+QGP formation. A considerbale theoretical work has been done 
+to dig out the information on QGP from these 
+data [For review see~\cite{GALER,PEITZ}].
+   One generally assumes, the formation of quark gluon plasma (QGP),
+which expands and cools down until it reaches a critical temperature $T_C$ 
+where a phase transition from the quark matter to the hadron matter begins.
+  In the most idealized picture, the temperature of the system is held
+fixed at $T=T_C$ until the phase conversion is completely over. 
+Such a picture is has been widely used in literature when describing
+the electromagntic signals \cite{}.
+  This is a good approximation when the expansion time scales are far 
+greater than the phase transition time scales as in the case of early 
+universe. For the case of relativistic heavy ion collisions, there have
+been extensive studies of the space time evolution of 
+QGP undergoing a first order phase transition
+\cite{CSER,ZABPRC,SHUK,INHOMO}.
+  As a result of rapid expansion of the system, a substantial amount of 
+supercooling is expected and the dynamics of quark hadron phase 
+transition becomes quite different in RHIC as compared to that 
+in early universe \cite{INHOMO,AKM}. 
+  It is expected that the QGP will supercool upto some temperature $T_m$ 
+until the density of nucleated hadron
+bubbles become sufficient to heat up the medium due to the release of latent
+heat. Another possibility in case of strong enough supercooling is, 
+the barrier between the metastable QGP and the stable hadron phase minima 
+completely vanishes leading to a point of inflection at $T=T_S$ known as 
+spinodal instability \cite{SPINO}. In this case, the rapidly quenched system 
+leaves the region of metastability and enters the highly unstable spinodal 
+region before a substantial amount of nucleation begins.
+   The spinodal decomposition has also been suggested as a
+possible mechanism of phase conversion for a rapidly expanding system of 
+quarks and gluons \cite{SPINO,DUMHEP,DUMPRL}. This hadronization process
+is much faster than the nucleation and is  
+also  referred as explosive decomposition \cite{DUMEXP} as the particles 
+formed would leave the system just after hadronization. 
+ Such a picture is not new and has been presented in literature
+as 'a fast shock like hadronization' in 
+Refs.~\cite{CSORGO} and a 'sudden hadronization scenario' in 
+Ref.~\cite{RAFEL}.
+    The short life time observed at SPS and RHIC
+may be indicative that the phase transition has gone through spinodal 
+decomposition which coincides with freeze out.
+ Recently, a fast shock like hadronization scenario is assumed 
+to explain the HBT data \cite{CSERNAI}.
+
+  The Photons and dileptons are the best probes of space time evolution of 
+quark-gluon plasma (QGP) possibly produced in relativistic heavy-ion
+collisions. Direct photon spectra have been measured by
+the WA98 collaboration at the SPS~\cite{WA98_2000}.
+The dilepton invariant mass spectrum has been measured by CERES \cite{CERES}
+also at SPS.
+   In the present work, the contribution of thermal photons and dileptons 
+are calculated and compared with SPS data, assuming the QGP formation which 
+expands and goes through a sudden hadronization coinciding with freeze out.
+ Various other sources of photons and dileptons have also been added
+in this work.
+ In photon sector, the contribution of prompt photons due to the 
+hard scattering of initial partons has been added which are calculated by QCD
+while photons from the decay of hadrons
+after freeze-out are already subtracted in the experimental analysis.
+ Similarly the dilepton spectrum is the total of thermal dileptons 
+integrated over space time and the background due to the
+dileptons coming from initial scattering and the hadron decays after 
+freeze out.
+
+
+\section{Model}
+
+ We consider that QGP is formed at some initial temperature $T_i$ and
+initial time $\tau_i$ and cools upto freeze out temperature 
+$T_f$ till time $\tau_f$ by the Bjorken
+1+1-hydrodynamical expansion. Considering the short life time 
+$\tau_f$ of the system, this is a good approximation and we need 
+not consider any transeverse expansion.
+
+  The total thermal photon/dilepton emission rate is given general by 
+the sum of corresponding rates $R_{\rm QGP}$ in the QGP and $R_{\rm hadron}$ in the hadron regions 
+integrated over space time volume element $d^4x = \tau d\tau d\eta \pi R^2$ as
+\begin{eqnarray}\label{}
+R_I  &=& \int_{\tau_i}^{\tau_f} \int_{-l}^{l} 
+      \left[(1-h(\tau)) R_{\rm QGP}(T(\tau),\eta) 
+   + h(\tau)  R_{\rm hadron}(T(\tau),\eta) \right]\tau d\tau d\eta \pi R^2
+\end{eqnarray}
+Here $\eta$ is the fluid rapidity and $R$ is the size of colliding 
+nuclei given by $R=1.2\, A^{1/3}$. $h(\tau)$ is the hadronic fraction
+at a time $\tau$ which we take as 0. 
+
+ The temperature $T(\tau)$ and the hadronic fractions are
+obtained from the hydrodynamic equations. The temperature variation
+in the quark phase is governed by,
+\begin{eqnarray}\label{}
+T(\tau) = T_i \left({\tau_i \over \tau}\right)^{1/3}
+\end{eqnarray}
+
+ Assuming, Bjorken scaling, the experimentally observed rapidity 
+density $dN/dy$ can be related to the initial conditions by
+
+\begin{equation}
+dN/dy = \pi R_A^2 4 a_q T_i^3 \tau_i/3.6,
+\end{equation}
+where $a_q$ is the number of degrees of freedom in quark phase.
+The experimentally observed $dN/dy=1.5\, dN_{ch}/dy$ 
+
+
+\section{The photon distribution}
+
+  The production rate for hard thermal photons from an equilibrated 
+QGP has been calculated in
+perturbative thermal QCD applying the hard thermal loop (HTL)
+resummation to account for medium effects. 
+
+
+The {\em Compton scattering} and {\em $q\bar{q}$-annihilation} contribution
+derived from the 1-loop HTL photon-polarization 
+tensor~\cite{KAPUSTA_1991,BAIER_1991,TRAXLER_1995} is given by
+%
+\be
+ E\,\frac{dN}{d^4x\,d^3p} \, =  {5\over 18 \pi^2}\,\alpha \alpha_s 
+       \ln \left(\frac{0.23\,E}{\alpha_s\,T}\right)
+            \,T^2\,e^{-E/T},
+\label{1-loop}
+\ee
+%
+The contributions from {\em bremsstrahlung}, 
+and {\em $q\bar{q}$-annihilation with an additional scattering in the medium},
+obtained from the 2-loop HTL photon-polarization
+tensor~\cite{AURENCHE_1998,THOMA} are given by
+%
+\be
+   E\,\frac{dN}{d^4x\,d^3p} \, = 
+        0.0219\,\alpha \alpha_s
+        \,T^2\,e^{-E/T},
+\label{bremss}
+\ee
+%
+
+%
+\be
+      E\,\frac{dN}{d^4x\,d^3p} \, =  
+        0.0105\,\alpha \alpha_s
+        \,E\,T\,e^{-E/T},
+\label{qqbar-aws}
+\ee
+%
+
+All three rates are listed for a two-flavored
+($N_f = 2$) QGP. Here $\alpha=1/137$ and the strong coupling constant is 
+$\alpha_s= 6\pi/((33-2N_f) \ln(8T/T_C))$ \cite{KARSCH}.
+The rates~(\ref{bremss}) and~(\ref{qqbar-aws}) were 
+{\em erroneously} multiplied 
+by a factor of 4 \cite{AURENCHE_1998}, 
+we take the rates in correct form \cite{THOMA}.
+
+ The thermal photon production in an equilibrated hadron phase
+is determined by considering various meson interactions
+$\pi \pi \rightarrow \rho \gamma$, $\pi \rho \rightarrow \pi
+\gamma$, $\omega \rightarrow \pi \gamma$ and $\rho
+\rightarrow \pi \pi \gamma$~\cite{KAPUSTA_1991,NADEAU_1992}.  By considering
+additionally the $\pi \rho \rightarrow a_1 \rightarrow \pi \gamma$ reaction, a
+strong enhancement of the rate was observed~\cite{XIONG_1992}. 
+ The numerical results of a detailed study of these dacays has been
+fitted by analytical expression as a function of temperature and photon
+energy as reported in Ref.~\cite{THOMA} given as
+%
+\be
+        E\,\frac{dN}{d^4x\,d^3p} \, = 
+        4.8\,T^{2.15}\,e^{-1/(1.35\,T\,E)^{0.77}}\,e^{-E/T},
+\label{Markus_suggestion}
+\ee
+%
+where photon energy~$E$ and temperature~$T$ are to be given in GeV to obtain the
+rate in units of $\fm^{-4}\GeV^{-2}$. 
+
+{\bf Prompt Photons}. 
+ Dumitru et al. \cite{DUMI} estimate the contribution of prompt photons 
+which employs the pQCD with inclusion of the effect of intrinsic 
+transverse momentum of the partons. Their results for Pb+Pb collision
+$\sqrt{s} = 17.4 A$GeV for $<K_T^2>=1.8$ GeV$^2$ including additional 
+broadening from nuclear effects can be parameterized as 
+\begin{equation}\label{promp}
+ E \frac{d^3 N}{d^3 p} = \exp(a + bP_T + cP_T^2 + dP_T^3)
+\end{equation}
+where $a=-4.1506$, $b=-1.9845$, $c=0.0744$, and 
+$d=-0.0383$.
+
+ In the work of Gallmeister~\cite{GALLMEISTER_2000} hard photon 
+ yield is generated by the event generator PYTHIA and are
+parameterized same as Eq.~(\ref{promp}) with the coefficients
+$a=-5.9883$, $b=2.0934$, $c=-1.6015$ and $d=0.1432$.
+ The WA98 direct photon data analysis of Gallmeister et al.\ obtained in 
+a model describing a {\em spherically} symmetric 
+expansion~\cite{GALLMEISTER_2000}.
+
+ It is also possible to reproduce the WA98 direct photon data analysis of
+Srivastava et al.~\cite{SRIVASTAVA_2000}, which does not necessitate prompt
+photons but instead initial conditions that are rather extreme for SPS, i.e.\ a
+very small thermalization time of $\tau_0 = 0.2\;\fm$ and a very high initial
+temperature of $T_0 = 335\;\MeV$. 
+The effective degrees of freedom in the hadron gas has been increased
+from the actual value of $g_h = 3$ to an effective one of $g_h =8$ in order 
+to achieve the fit in the HHG thermal photon spectrum. This reduces
+the life of mixed phase and hence reducing the contribution from 
+hadron phase.
+
+
+For {\em typical} parameters 
+%
+$\tau_i = 0.8\;\fm$, $T_c = 160\;\MeV$, $T_f = 140\;\MeV$, 
+%
+nucleon number $A=208$ (corresponding to Pb + Pb collisions)
+we have obtained the photon spectrum.
+
+
+\section{The dilepton distribution}
+
+ The dilepton emission rate in the quark sector considering the 
+processes ($q \bar q \rightarrow e^- e^+$)
+is given \cite{KAJA,VOGT} by 
+
+\begin{eqnarray}\label{}
+ {dN \over d^4x d^2p_T dy dM^2}
+&=& \frac{3}{(2\pi)^5} M^2 \sigma(M^2)
+        \exp\left(-\frac{E}{T}\right), \nonumber \\
+&=& \frac{\alpha^2}{8\pi^4} \left(\sum e_q^2\right) 
+        \exp\left(-\frac{E}{T}\right).
+\end{eqnarray}
+Here, $\sigma(M^2)=4\pi\alpha^2/3M^2$ and $F_q = \sum e_q^2 = 5/9$.
+
+The dilepton emission rate from hadron phase is given by
+\begin{eqnarray}\label{}
+\frac{dN}{d^4x d^2p_T dy dM^2} = \frac{\alpha^2}{8\pi^4}\, F_h \,
+ \exp(-{E\over T}),
+\end{eqnarray}
+For the hadrons, if we assume 
+$\pi\pi \rightarrow \rho \rightarrow l^+l^-$ is the dominant channel, 
+\begin{eqnarray}\label{}
+F_h = \frac{1}{12} \frac{m_\rho^4}{(m_\rho^2-M^2)^2 + m_\rho^2 \Gamma_\rho^2}
+\end{eqnarray}
+The parameters used are $m_\rho$=768 MeV, $\Gamma$=151 MeV. The detail
+form factors can be obtained from Ref.~\cite{GALE}
+
+We get, the $p_T$ distribution as
+\begin{eqnarray}\label{}
+\frac{dN}{d^4x dy dM dp_T d\phi} = \frac{\alpha^2}{4\pi^4}  F \, M \,
+   \exp\left(-\frac{ \sqrt{M^2 + p_T^2} cosh (y-\eta)}{T}\right) \, p_T
+\end{eqnarray}
+
+and the invariant mass distribution 
+\begin{eqnarray}\label{}
+\frac{dN}{d^4x dy dM} = \frac{\alpha^2}{2\pi^3} F \, M^3 \,
+\left({1\over x^2} + {1\over x}\right) \exp(-x),
+\end{eqnarray}
+where
+
+\begin{eqnarray}\label{}
+x=\frac{ M \cosh (y-\eta)}{T}.
+\end{eqnarray}
+
+Here $M$, $p_T$ and $y$ are the mass, transverse momentum,
+and  rapidity of the lepton pair and $\eta$ is the rapidity
+of the fluid with temperature $T$.
+
+
+
+\section{HBT radii and other parameters at SPS and RHIC}
+
+At SPS 158A GeV Pb + Pb collisions at center of mass energy 
+17.5A GeV the total charged particle multiplicity is 
+$N_{ch}= 700$. The flow parameters are $\eta \simeq \pm 1$ and
+$\beta_c$ = 0.76 \cite{LET}. The freeze out parameters are
+$\mu_B$= 270 MeV  and $T_f$ = 143 MeV \\
+
+At RHIC Au + Au collisions at center of mass energy 
+130A GeV the total charged particle multiplicity is 
+$N_{ch}= 4000$. The flow parameters are $\eta \simeq \pm 1.5$,
+$\beta_c$ = 0.90. The freeze out parameters are
+$\mu_B$= 50 MeV, $T_f$ = 140 MeV.
+The HBT radii from PHENIX experiment \cite{PHEN} are 5-7 fm.
+The ratio $R_{out}/R{side} \leq 1$. 
+On the basis of hydrodynamics $R_{out}/R{side} \sim 2$.
+\ \\
+
+\newpage
+
+\begin{figure}
+\centerline{\psfig{figure=photonew.ps,width=10cm,height=9.5cm}}
+\caption{}
+\label{photon}
+\end{figure}
+
+\begin{figure}
+\centerline{\psfig{figure=ceres.ps,width=10cm,height=9.5cm}}
+\caption{}
+\label{photon}
+\end{figure}
+
+
+\begin{thebibliography}{00}
+
+\bibitem{ESKOLA} {\it High Energy Nuclear Collisions}, Plenary talk 
+  given at Int. Europhysics conference on High Energy Physics 
+  (EPS-HEP99), Tampere, Finland, July 15-21, 1999, 
+  Preprint: hep-ph/9911350 (1999).
+  
+\bibitem{GALER} C. Gale, in {Quark Gluon Plasma 3}, World Scientific,
+         Singapore, 2003. 
+         
+\bibitem{PEITZ} For recent review,  T. Peitzman, nucl-ex/0201003 (2002).
+
+\bibitem{}
+
+\bibitem{WA98_2000} WA98 Collab., M.M.\ Aggarwal et al., 
+            Phys. Rev. Lett. 85, 3598 (2000); nucl-ex/0006007 (2000).
+
+\bibitem{CERES} B. Lenkeit for CERES Coll., 
+        Nucl. Phys. {\bf A654}, 627c (1999); nucl-ex/9910015.
+
+\bibitem{CSER} L.P. Csernai and J.I. Kapusta, Phys. Rev. Lett. {\bf 69},
+               737 (1992).
+
+\bibitem{ZABPRC} E.E. Zabrodin, L.V. Bravina, H. Stocker, and W. Griener,
+         Phys. Rev. C{\bf 59}, 894 (1999).
+
+\bibitem{SHUK} P. Shukla, S.K. Gupta, and A.K. Mohanty,
+         Phys. Rev. C{\bf 59}, 914 (1999); {\it ibid} {\bf 62}, 39901 (2000).
+
+\bibitem{INHOMO} P. Shukla, A.K. Mohanty, S. K. Gupta, and M. Gleiser,
+              Phys. Rev. C{\bf 62}, 054904 (2000).
+
+\bibitem{AKM} A.K. Mohanty, P. Shukla and M. Gleiser,
+              Phys. Rev. C{\bf 65}, 034908 (2002).
+              
+\bibitem{SPINO} P. Shukla and A. K. Mohanty, Phys. Rev. C{\bf 64},
+        054910 (2001).              
+
+\bibitem{DUMHEP} O. Scavenius, A. Dumitru, E.S. Fraga, J.T. Lenaghan,
+         A.D. Jackson, Phys. Rev. D{\bf 63}, 116003 (2001).
+
+\bibitem{DUMPRL} O. Scavenius, A. Dumitru,
+         Phys. Rev. Lett. {\bf 83}, 4697 (1999).
+         
+\bibitem{DUMEXP} O. Scavenius, A. Dumitru, A.D. Jackson, 
+          hep-ph/0103219.
+          
+\bibitem{CSORGO} T. Csorgo, L.P. Csernai, Phys. Lett {\bf B333}, 494 (1994);
+       L.P. Csernai, I.N. Mishustin, Phys. Rev. Lett. {\bf 74}, 5005 (1995).
+       
+\bibitem{RAFEL} J. Rafelski and J. Letessier, Phys. Rev. Lett. {\bf 85},
+                  4695 (2000).
+         
+\biitem{CSERNAI} L.P. Csernai, M.I. Gorenstein, L.L. jenkovszky, 
+                        I. Lovas and V.K. Magas, hep-ph/0210297.
+
+
+\bibitem{MAD} M.B. Christiansen and J. Madsen,
+           Phys. Rev. D{\bf 53}, 5446 (1996).
+
+\bibitem{KAPUSTA_1991} J.\ Kapusta, P.\ Lichard, and D.\ Seibert, 
+   Phys.\ Rev.\ {\bf D44}, 2774 (1991); {\bf D47}, 4171 (1993). 
+
+\bibitem{BAIER_1991} R.\ Baier, H.\ Nakkagawa, A.\ Ni\'{e}gawa, and
+K.\ Redlich, Z.\ Phys.\ {\bf C53}, 433 (1992).
+
+\bibitem{TRAXLER_1995} C.T.\ Traxler, H.\ Vija, and M.H.\ Thoma,
+Phys.\ Lett.\ {\bf B346}, 329 (1995).
+  
+\bibitem{AURENCHE_1998} P.\ Aurenche, F.\ Gelis, R.\ Kobes, and H.\ Zaraket,
+  Phys.\ Rev.\ {\bf D58}, 085003 (1998); \mbox{hep-ph/9804224}. 
+
+\bibitem{THOMA} F. D. Steffen and M. H. Thoma, Phys. Lett. B510, 
+                  1998 (2001).
+                  
+\bibitem{KARSCH} F. Karsch, Z. Phys. C{\bf 38}, 147 (1988).
+  
+\bibitem{NADEAU_1992} H.\ Nadeau, J.\ Kapusta, and P.\ Lichard,
+Phys.\ Rev.\ {\bf C45}, 3034 (1992); {\bf C47} 2426 (1993).
+
+\bibitem{XIONG_1992} L.\ Xiong, E.\ Shuryak, and G.E.\ Brown, Phys.\
+Rev.\ {\bf D46}, 3798 (1992).
+
+\bibitem{DUMI} A. Dumitru, L. Frankfurt, L. Geland, H. Stocker, and
+               M. Strikeman, Phys. Rev. C{\bf 64}, 054909 (2001).
+
+\bibitem{GALLMEISTER_2000} K.\ Gallmeister, B.\ K\"ampfer, and O.P.\ Pavlenko, 
+            Phys. rev. C{\bf 62}, 057901 (2000); hep-ph/0006134 (2000).
+
+\bibitem{SRIVASTAVA_SINHA_1999} D.K.\ Srivastava and B.C.\ Sinha,
+             Eur.\ Phys.\ J.\ {\bf C12}, 109 (2000).
+
+\bibitem{SRIVASTAVA_2000} D.K.\ Srivastava and B.\ Sinha, nucl-th/0006018 (2000).
+
+\bibitem{KAJA} K. Kajantie, M. Kataja, L. McLerran, and P. V. Ruuskanen,
+               Phys. Rev. D{\bf 34}, 811 (1986).
+
+\bibitem{VOGT} R. Vogt, B. V. Jacak, P. L. McGaughey, P. V. Ruuskanen,
+          Phys. Rev. D {\bf 49}, 3345 (1994).
+          
+\bibitem{GALE} C. Gale and P. Lichard, Phys. Rev. D{\bf 49}, 3338 (1994);
+               C. Song, C.M. Ko, and C. Gale, {\it ibit} 50 R 1827 (1994).
+
+\bibitem{LET} J. Letessier and J. Rafelski, hep-ph/0106151.
+
+\bibitem{PHEN} PHENIX Collaboration, K. Adcox et. al., 
+                    nucl-ex/0109003.
+
+\end{thebibliography}
+
+\end{document}
+
+
+
+
+

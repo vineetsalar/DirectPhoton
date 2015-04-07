@@ -1,0 +1,1 @@
+pdflatex photon2.tex;pdflatex photon2.tex;pdflatex photon2.tex;evince photon2.pdf&

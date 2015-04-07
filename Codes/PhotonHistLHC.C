@@ -70,7 +70,7 @@ Double_t Temp_f = 0.130;
 //T0 is 550 - 580 MeV and tau0 is 0.3
 const Double_t mPi = 0.140; 
 const Double_t RPb = 7.11;  //1.2*TMath::Power(208,1.0/3.0)
-const Double_t R05 = 0.92*RPb;
+const Double_t R05 = 0.96*RPb;
 const Double_t tau0 = 0.3;
 
 //const Double_t SS=3.6*1.5*1600;
@@ -103,20 +103,11 @@ const Double_t nColl0 = 1747;
 Double_t EtaStart = -1;
 Double_t EtaEnd = 1;
 
-
-/*
-//Medium Evolution Functions
-int NTau; double stepTau;
-double Tau[10000], TempTau[10000], fQGP[10000];
-*/
-
 //==================================== Lattice EOS ================================================//
 TFile *fileEOS=new TFile("LatticeEOS_s95p-v1.2.root","R");
 TGraph *grfSSVsTemp = (TGraph*)fileEOS->Get("grfSSVsTemp");
 TGraph *TempVsFQGP = (TGraph*)fileEOS->Get("TempVsFQGP");
 TGraph *TempVsFQGP2 = (TGraph*)fileEOS->Get("TempVsFQGP2");
-
-
 
 
 Double_t Npart(int BinLow, int BinHigh);
@@ -133,11 +124,10 @@ double Steptime;
 
 
 //Direct Photon
-Double_t RatePhoton(Double_t RCent, Double_t Pt);
-Double_t RateQGP_IntTau(Double_t Pt);
+Double_t RateQGP_IntTau(Double_t Pt, Double_t RCent);
 Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T);
 Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf);
-Double_t RateHadron_IntTau(Double_t Pt);
+Double_t RateHadron_IntTau(Double_t Pt, Double_t RCent);
 Double_t RateHadron_IntEtaf(Double_t Pt, Double_t T);
 Double_t RateHadron(Double_t Pt, Double_t T, Double_t Etaf);
 Double_t RateQCD_IntTau(Double_t Pt);
@@ -175,7 +165,7 @@ void PhotonHistLHC()
 
   Draw_AllDataGraphs();
 
-  return;
+  //return;
 
   
   cout<<" simulating QGP evolution : "<<endl;
@@ -290,13 +280,12 @@ void PhotonHistLHC()
   Int_t NPt = (PtMax - PtMin)/PtStep;
   
   Double_t Pt[100]={0.0};
-  Double_t DirectPhoton[100]={0.0};
 
+  Double_t DirectPhoton[100]={0.0};
   Double_t DirectPhotonQGP[100]={0.0};
   Double_t DirectPhotonHadron[100]={0.0};
 
-  //Double_t RateQGP_IntTau(Double_t Pt)
-
+  Double_t DirectPhotonPQCD[100]={0.0};
 
   //Double_t R0MB = R05*TMath::Power(Npart(0,40)/Npart(0,2),0.5);
 
@@ -305,22 +294,29 @@ void PhotonHistLHC()
     {
       Pt[i]=PtMin+i*PtStep;
       
-      DirectPhotonQGP[i] = pi*R040*R040*RateQGP_IntTau(Pt[i])/hbarc4;
-      DirectPhotonHadron[i] = pi*R040*R040*RateHadron_IntTau(Pt[i])/hbarc4;
-
-      DirectPhoton[i] = RatePhoton(R040,Pt[i])/hbarc4;
+      DirectPhotonPQCD[i] = RateQCD_IntTau(Pt[i]);
+      
+      DirectPhotonQGP[i] = RateQGP_IntTau(Pt[i],R040);
+      DirectPhotonHadron[i] = RateHadron_IntTau(Pt[i],R040);
       
 
-
+      DirectPhoton[i] = DirectPhotonPQCD[i] + DirectPhotonQGP[i] + DirectPhotonHadron[i];
+      
       cout<<Pt[i]<<"    "<<DirectPhotonHadron[i]<<"    "<<DirectPhotonQGP[i]<<"   "<<DirectPhoton[i]<<endl;
     }  
+
+  TGraph *grfPhotonPQCD = new TGraph(NPt,Pt,DirectPhotonPQCD);
+  grfPhotonPQCD->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  grfPhotonPQCD->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  grfPhotonPQCD->GetYaxis()->SetTitleOffset(1.4);
+  grfPhotonPQCD->SetLineColor(8);
+
 
 
   TGraph *grfDirectPhotonQGP = new TGraph(NPt,Pt,DirectPhotonQGP);
   grfDirectPhotonQGP->GetXaxis()->SetTitle("p_{T}[GeV/c]");
   grfDirectPhotonQGP->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
   grfDirectPhotonQGP->GetYaxis()->SetTitleOffset(1.4);
-  //grfDirectPhotonQGP->GetYaxis()->SetRangeUser(0.00001,100);
   grfDirectPhotonQGP->SetLineColor(2);
 
 
@@ -328,18 +324,16 @@ void PhotonHistLHC()
   grfDirectPhotonHadron->GetXaxis()->SetTitle("p_{T}[GeV/c]");
   grfDirectPhotonHadron->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
   grfDirectPhotonHadron->GetYaxis()->SetTitleOffset(1.4);
-  //grfDirectPhotonHadron->GetYaxis()->SetRangeUser(0.00001,100);
-  grfDirectPhotonHadron->SetLineColor(1);
-
-
+  grfDirectPhotonHadron->SetLineColor(4);
 
 
   TGraph *grfDirectPhoton = new TGraph(NPt,Pt,DirectPhoton);
   grfDirectPhoton->GetXaxis()->SetTitle("p_{T}[GeV/c]");
   grfDirectPhoton->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
   grfDirectPhoton->GetYaxis()->SetTitleOffset(1.4);
-  //grfDirectPhoton->GetYaxis()->SetRangeUser(0.00001,100);
-  
+  grfDirectPhoton->SetLineColor(1);
+
+
   TLegend *legd5 = new TLegend( 0.60,0.70,0.82,0.85);
   legd5->SetBorderSize(0);
   legd5->SetFillStyle(0);
@@ -349,16 +343,19 @@ void PhotonHistLHC()
   legd5->AddEntry(grfDirectPhoton,"Sum","L");
   legd5->AddEntry(grfDirectPhotonQGP,"QGP","L");
   legd5->AddEntry(grfDirectPhotonHadron,"Hadron","L");
-
+  legd5->AddEntry(grfPhotonPQCD,"pQCD","L");
 
   new TCanvas;
   gPad->SetTicks();
   gPad->SetLogy();
+  Draw_ALICE_DirectPhotonRate040_Pt(legd5);
+
   grfDirectPhoton->SetLineWidth(2);
-  grfDirectPhoton->SetLineColor(4);
-  grfDirectPhoton->Draw("APL");
-  grfDirectPhotonHadron->Draw("Lsame");
-  grfDirectPhotonQGP->Draw("Lsame");
+  grfDirectPhoton->SetLineColor(1);
+  grfDirectPhoton->Draw("Csame");
+  grfDirectPhotonHadron->Draw("Csame");
+  grfDirectPhotonQGP->Draw("Csame");
+  grfPhotonPQCD->Draw("Csame");
   legd5->Draw("Lsame");
 
 
@@ -430,40 +427,33 @@ Double_t NColl(int BinLow, int BinHigh)
 
 
 //================================ Direct Photon Functions =======================================//
-Double_t RatePhoton(Double_t RCent, Double_t Pt)
+
+Double_t RateQGP_IntTau(Double_t Pt, Double_t RCent)
 {
-  Double_t Area = pi*RCent*RCent;
-  Double_t RPhoton =0.0;
-  RPhoton =Area*(RateQGP_IntTau(Pt) + RateHadron_IntTau(Pt));
 
-  return RPhoton;
-
-}
-
-
-
-
-Double_t RateQGP_IntTau(Double_t Pt)
-{
   Double_t Sum =0.0;
+  Double_t VTau =0.0;
 
-  for(int i =0;i<=Ntime;i++)
+  for(int i =0;i<Ntime;i++)
     {
-      Sum = Sum + RateQGP_IntEtaf(Pt,Temp[i])*(1-h[i])*tau[i]; 
 
+      VTau = (RCent+0.5*aT*tau[i]*tau[i])*(RCent+0.5*aT*tau[i]*tau[i])*(z0+vZ*tau[i])*pi;
+      Sum = Sum + RateQGP_IntEtaf(Pt,Temp[i])*(1-h[i])*VTau; 
+      
     }
-
   return Sum*Steptime;
-
 }
+
+
+
 
 
 Double_t RateQGP_IntEtaf(Double_t Pt, Double_t T)
 {
   Double_t Etaf=0.0;
-  Double_t EtafMin = -1.0;
-  Double_t EtafMax = 1.0;
-  Double_t EtafStep = 0.0001;
+  Double_t EtafMin = -4.0;
+  Double_t EtafMax = 4.0;
+  Double_t EtafStep = 0.01;
   Int_t NEtaf = (EtafMax - EtafMin)/EtafStep;
 
   Double_t Sum =0.0;
@@ -503,22 +493,23 @@ Double_t RateQGP(Double_t Pt, Double_t T, Double_t Etaf)
 
   RQGP = RQGP1 + RQGP2 + RQGP3; 
 
-  return RQGP;
+  return RQGP/hbarc4;
 }
 
 
 // ================================= Rate Hadron ==============================//
-
-Double_t RateHadron_IntTau(Double_t Pt)
+Double_t RateHadron_IntTau(Double_t Pt, Double_t RCent)
 {
   Double_t Sum =0.0;
-  for(int i =0;i<=Ntime;i++)
+  Double_t VTau =0.0;
+  for(int i =0;i<Ntime;i++)
     {
-      Sum = Sum + RateHadron_IntEtaf(Pt,Temp[i])*h[i]*tau[i]; 
+      VTau = (RCent+0.5*aT*tau[i]*tau[i])*(RCent+0.5*aT*tau[i]*tau[i])*(z0+vZ*tau[i])*pi;
+      Sum = Sum + RateHadron_IntEtaf(Pt,Temp[i])*h[i]*VTau; 
 
     }
 
-  return Sum*Steptime*hbarc4;
+  return Sum*Steptime;
 
 }
 
@@ -527,9 +518,9 @@ Double_t RateHadron_IntTau(Double_t Pt)
 Double_t RateHadron_IntEtaf(Double_t Pt, Double_t T)
 {
   Double_t Etaf=0.0;
-  Double_t EtafMin = -1.0;
-  Double_t EtafMax = 1.0;
-  Double_t EtafStep = 0.0001;
+  Double_t EtafMin = -4.0;
+  Double_t EtafMax = 4.0;
+  Double_t EtafStep = 0.01;
   Int_t NEtaf = (EtafMax - EtafMin)/EtafStep;
 
   Double_t Sum =0.0;
@@ -562,17 +553,11 @@ Double_t RateHadron(Double_t Pt, Double_t T, Double_t Etaf)
 
 
 
-
-
-
 Double_t RateQCD_IntTau(Double_t Pt)
 {
+  /*
   Double_t Sum =0.0;
   Double_t IntEtaf = 2.0;
-
-  //Double_t tau[10000], Temp[10000], h[10000];
-  //Int_t Ntime;
-  //double Steptime;
 
   for(int i =0;i<=Ntime;i++)
     {
@@ -581,13 +566,19 @@ Double_t RateQCD_IntTau(Double_t Pt)
     }
 
   return Sum*IntEtaf*RateQCD(Pt)*Steptime;
+  */
 
+  Double_t xx =0.0;
+  xx = RateQCD(Pt);
+  return xx;
 
 }
 
 
 Double_t RateQCD(Double_t Pt)
 {
+
+  /*
   Double_t a = -4.1506;
   Double_t b = -1.9845;
   Double_t c = 0.0744;
@@ -596,7 +587,27 @@ Double_t RateQCD(Double_t Pt)
   Double_t RQCD =0.0;
   RQCD = TMath::Exp(a+b*Pt+c*Pt*Pt+d*Pt*Pt*Pt);
   return RQCD;
+  */
+  //From ALICE Paper 
 
+  Double_t APt[30]={2.14,   2.38,   2.59,   2.86,   3.15,   3.48,   3.81,   4.16,   4.51,   4.86,   5.25,   5.62,   6.07,   
+		   6.58,   7.00,   7.47,   7.90,   8.35,   8.83,   9.34,   9.71,   10.24,   10.74,   11.27,   11.83,   
+		   12.30,   12.59,   13.08,   13.55,   13.94};
+
+  Double_t D2NByPtDPtDy[30]={0.009903112,   0.006549429,   0.003952514,   0.002736074,   0.001650603,   0.001091140,   0.000721304,   
+			     0.000499134,   0.000345396,   0.000228305,   0.000150882,   0.000114419,   0.000079141,   0.000049934,   
+			     0.000039631,   0.000027410,   0.000021754,   0.000016491,   0.000011405,   0.000008643,   0.000007520,   
+			     0.000005444,   0.000004733,   0.000003426,   0.000002845,   0.000002258,   0.000001793,   0.000001559,   
+			     0.000001295,   0.000001180};
+
+
+  TGraph *Grf_QCDRate = new TGraph(30,APt,D2NByPtDPtDy);
+
+  Double_t Rate =0.0;
+  Rate =Grf_QCDRate->Eval(Pt);
+
+
+  return Rate;
 
 }
 
