@@ -123,81 +123,142 @@ are calculated and compared with SPS data, assuming the QGP formation which
 expands and goes through supercooling.
 
 
-\section{Model}
+\section{Hydrodynamic Model}
 
- We consider that QGP is formed at some initial temperature $T_i$ and
-initial time $\tau_i$ and starts cooling by Bjorken hydrodynamics.
-sTransverse expansion is not taken into account considering short 
-life time of the system. To get the equations of state it is assumed that 
-QGP is a massless 2 flavour parton gas and hadronic phase is a massless three 
-pion gas.
-
- When the QGP cools to the critical temperature $T_C$ we invoke 
-following four scenario for the calculations:
-
-(1) Idealized Maxwell construction (from $T_i$ to $T_f$.):
-    The temperature of the system is held fixed at $T=T_C$ until 
-    the hadronization is completed. Afterwards the hadron gas
-    cools to $T_f$ by hydrodyanmics.
-
-(2) Supercooling scenario (from $T_i$ to $T_f$.)
-   At $T_C$, hydrodynamical equations are coupled with nucleation 
-  rate equations \cite{IHOMO,SPINO}. The QGP 
-   supercools to a temperature $T_S$ lower than 
-  $T_C$ as shown in Fig.~1. The hadronization proceeds by 
-  thermal fluctuation from this metastable QGP phase to stable hadron phase. 
- The system reheats due to the release of latent heat and approaches to 
- $T_C$ as the hadronization proceeds. When hadronization is completed,  
- the hadron gas cools to $T_f$ by hydrodyanmics.
-
-(3) Spinodal decomposition followed by freeze out
-             (from $T_i$ to $T_S$.)
-   QGP supercools to a $T_S$ which is close to spinodal temperature
- \cite{SPINO}. The QGP breaks up into small droplets of plasma,
-which will form hadrons which then freezw out.
-
-
-(4) Fragmentation at 95 \% of hadronization followed by freeze out
-               (from $T_i$ to $T_P$.)
-  In the nucleation scenario (2) when 95 \% of the QGP volume has been 
-converted to hadrons, the system breaks up into fragments: hadronic clusters 
-and small droplets of plasma which then form the final state hadrons. 
-
-
-  The total thermal photon/dilepton emission rate is given general by 
-the sum of corresponding rates $R_{\rm QGP}$ in the QGP and $R_{\rm hadron}$ 
-in the hadron regions integrated over space time volume 
-element $d^4x = \tau d\tau d\eta_f \pi R^2$ as
-\begin{eqnarray}\label{}
-R_I  &=& \int_{\tau_i}^{\tau_f} \int_{-l}^{l} 
-      \left[(1-h(\tau)) R_{\rm QGP}(T(\tau),\eta_f) 
-   + h(\tau)  R_{\rm hadron}(T(\tau),\eta_f) \right]\tau d\tau d\eta_f \pi R^2
-\end{eqnarray}
-Here $\eta_f$ is the fluid rapidity and $R$ is the size of colliding 
-nuclei given by $R=1.2\, A^{1/3}$. The $h(\tau)$ is the hadronic fraction
-at a time $\tau$.
-
- The temperature $T(\tau)$ and the hadronic fractions $h(\tau)$ are
-obtained using above two scenario. The temperature variation
-in the quark phase is governed by,
-\begin{eqnarray}\label{}
-T(\tau) = T_i \left({\tau_i \over \tau}\right)^{1/3}
-\end{eqnarray}
-
-
-While the temperature variation in the hadron phase is governed by,
-\begin{eqnarray}\label{}
-T(\tau) = T_h \left({\tau_h \over \tau}\right)^{1/3}
-\end{eqnarray}
-
- Assuming, Bjorken scaling, the experimentally observed rapidity 
-density $dN/dy$ can be related to the initial conditions by
-
+We consider that QGP is formed at some initial temperature $T_i$ and
+initial time $\tau_i$ and starts cooling. The evolution of the system for each 
+centrality of collision is governed by an isentropical cylindrical expansion with volume element
 \begin{equation}
-dN/dy = \pi R_A^2 4 a_q T_i^3 \tau_i/3.6,
+V(\tau) = \tau\,\pi\,(R + {1\over 2} a \, \tau^2 )^{2},
 \end{equation}
-where $a_q$ is the number of degrees of freedom in quark phase.
-The experimentally observed $dN/dy=1.5\, dN_{ch}/dy$ 
+ where a$_T$=0.1c$^2$ fm$^{-1}$ is the transverse acceleration \cite{Zhao:2011cv}.
+ The initial transverse size, $R$ as a function of centrality is obtained as 
+\begin{equation}
+R(N_{\rm part}) = R_{0-5\%} \, \sqrt{N_{\rm part} \over (N_{\rm part})_{0-5\%} },
+\label{RVsNPart}
+\end{equation}
+where $R_{0-5\%} = 0.96\,R_{\rm Pb}$; $R_{\rm Pb}$ being the radius of the Pb nucleus.
+
+The evolution of entropy density for each centrality is obtained by entropy conservation 
+condition $s(T)\,V(\tau)= s(T_0)\,V(\tau_0)$.
+The equation of state obtained by Lattice QCD along with hadronic resonance gas \cite{Huovinen:2009yb} 
+is used to obtain the temperature as a function of proper time $\tau$.
+  The initial entropy density for each centrality is calculated using 
+\begin{equation}
+s(\tau_0) = s(\tau_0)|_{0-5\%} \left(\frac{dN/d\eta}{N_{\rm part}/2}\right)/\left(\frac{dN/d\eta}{N_{\rm part}/2}\right)_{0-5\%}.
+\label{TempNpart}
+\end{equation}
+Measured values of $\left(\frac{dN/d\eta}{N_{\rm part}/2}\right)$ as a function of $N_{\rm part}$ 
+\cite{Aamodt:2010cz,Chatrchyan:2011pb} are used in the calculations.
+
+The initial entropy density $s(\tau_0)|_{0-5\%}$ for 0-5\% centrality is obtained as 
+\begin{eqnarray}
+s(\tau_0)|_{0-5\%}  = {a_{\rm m} \over V(\tau_0)|_{0-5\%}}   \left(\frac{dN}{d\eta}\right)_{0-5\%} . 
+\label{TempVsMult}
+\end{eqnarray}  
+ Here $a_m$ (= 5 ) is a constant which relates the total entropy with the multiplicity. It is
+obtained from hydrodynamic calculations \cite{Shuryak:1992wc}. 
+Using $(dN/d\eta)_{0-5\%}$=1.5$\times$1600 obtained from the charge particle multiplicity measured in PbPb 
+collisions \cite{Aamodt:2010cz,Chatrchyan:2011pb} at 2.76 TeV and with lattice
+equation of state we obtain the initial temperature for the most central collisions 
+as 0.492 GeV at time $\tau_0$ = 0.3 fm/c. To estimate the initial temperature $T_{0}$ in 
+forward rapidity we use measured charged particle density $(dN/d\eta)$ in forward rapidity \cite{Abbas:2013bpa}. 
+For ALICE rapidity coverage $[2.5\leq y \leq 4]$ the average temperature in most central 0-5\% collisions 
+is found to be 0.434 GeV at time $\tau_0$ = 0.3 fm/c.
+
+The (proper) time evolution of temperature is shown in Fig.~\ref{fig:TauVsTemp}(a) 
+and that of QGP fraction in Fig.~\ref{fig:TauVsTemp}(b), in case of most central (0-5$\%$) collisions.
+Here we compare the evolutions obtained with longitudinal and cylindrical expansions using 
+both first order and lattice Equation of state (EOS). 
+ For the first order EOS, $T_C$ = 0.170 GeV and the QGP fraction goes from 1 to 0 at this
+temperature assuming a mixed phase of QGP and hadrons.
+  The QGP fraction in case of lattice EOS governs number of degrees of freedom 
+decided by entropy density. It is fixed to 1 above an entropy density 
+corresponding to a 2-flavour QGP and fixed to zero below entropy density for a hot 
+resonance gas. The freeze out temperature in all cases is $T_f=0.140$ GeV.  
+
+
+\begin{figure}
+\includegraphics[width=0.49\textwidth]{LHC_TempVsTau.pdf}
+\includegraphics[width=0.49\textwidth]{LHC_FQGPVsTau.pdf}
+\caption{(Color online) (a) Temperature and (b) QGP fraction in the system as a function of proper 
+time $\tau$ in case of the most central (0-5$\%$) collisions for longitudinal and cylindrical expansions 
+using first order and lattice equation of state . }
+\label{fig:TauVsTemp}
+\end{figure}
+
+%sTransverse expansion is not taken into account considering short 
+%life time of the system. To get the equations of state it is assumed that 
+%QGP is a massless 2 flavour parton gas and hadronic phase is a massless three 
+%pion gas.
+
+% When the QGP cools to the critical temperature $T_C$ we invoke 
+%following four scenario for the calculations:
+
+%(1) Idealized Maxwell construction (from $T_i$ to $T_f$.):
+%    The temperature of the system is held fixed at $T=T_C$ until 
+%    the hadronization is completed. Afterwards the hadron gas
+%    cools to $T_f$ by hydrodyanmics.
+
+%(2) Supercooling scenario (from $T_i$ to $T_f$.)
+%   At $T_C$, hydrodynamical equations are coupled with nucleation 
+%  rate equations \cite{IHOMO,SPINO}. The QGP 
+%   supercools to a temperature $T_S$ lower than 
+%  $T_C$ as shown in Fig.~1. The hadronization proceeds by 
+%  thermal fluctuation from this metastable QGP phase to stable hadron phase. 
+% The system reheats due to the release of latent heat and approaches to 
+% $T_C$ as the hadronization proceeds. When hadronization is completed,  
+% the hadron gas cools to $T_f$ by hydrodyanmics.
+
+%(3) Spinodal decomposition followed by freeze out
+%             (from $T_i$ to $T_S$.)
+%   QGP supercools to a $T_S$ which is close to spinodal temperature
+% \cite{SPINO}. The QGP breaks up into small droplets of plasma,
+%which will form hadrons which then freezw out.
+
+
+%(4) Fragmentation at 95 \% of hadronization followed by freeze out
+%               (from $T_i$ to $T_P$.)
+%  In the nucleation scenario (2) when 95 \% of the QGP volume has been 
+%converted to hadrons, the system breaks up into fragments: hadronic clusters 
+%and small droplets of plasma which then form the final state hadrons. 
+
+%The total thermal photon/dilepton emission rate is given general by 
+%the sum of corresponding rates $R_{\rm QGP}$ in the QGP and $R_{\rm hadron}$ 
+%in the hadron regions integrated over space time volume 
+%element $d^4x = \tau d\tau d\eta_f \pi R^2$ as
+%\begin{eqnarray}\label{}
+%R_I  &=& \int_{\tau_i}^{\tau_f} \int_{-l}^{l} 
+%      \left[(1-h(\tau)) R_{\rm QGP}(T(\tau),\eta_f) 
+%   + h(\tau)  R_{\rm hadron}(T(\tau),\eta_f) \right]\tau d\tau d\eta_f \pi R^2
+%\end{eqnarray}
+%Here $\eta_f$ is the fluid rapidity and $R$ is the size of colliding 
+%nuclei given by $R=1.2\, A^{1/3}$. The $h(\tau)$ is the hadronic fraction
+%at a time $\tau$.
+
+% The temperature $T(\tau)$ and the hadronic fractions $h(\tau)$ are
+%obtained using above two scenario. The temperature variation
+%in the quark phase is governed by,
+%\begin{eqnarray}\label{}
+%T(\tau) = T_i \left({\tau_i \over \tau}\right)^{1/3}
+%\end{eqnarray}
+
+%While the temperature variation in the hadron phase is governed by,
+%\begin{eqnarray}\label{}
+%T(\tau) = T_h \left({\tau_h \over \tau}\right)^{1/3}
+%\end{eqnarray}
+
+% Assuming, Bjorken scaling, the experimentally observed rapidity 
+%density $dN/dy$ can be related to the initial conditions by
+
+%\begin{equation}
+%dN/dy = \pi R_A^2 4 a_q T_i^3 \tau_i/3.6,
+%\end{equation}
+%where $a_q$ is the number of degrees of freedom in quark phase.
+%The experimentally observed $dN/dy=1.5\, dN_{ch}/dy$ 
+
+
+
 
 
 \section{The photon distribution}
@@ -312,6 +373,14 @@ nucleon number $A=208$ (corresponding to Pb + Pb collisions)
 we have obtained the photon spectrum.
 
 
+
+
+
+
+
+
+
+
 \section{The dilepton distribution}
 
  The dilepton emission rate in the quark sector considering the 
@@ -390,6 +459,11 @@ manifestation in photon spectrum.
 \bibitem{WA98} WA98 Collab., M.M.\ Aggarwal et al., 
             Phys. Rev. Lett. 85, 3598 (2000); nucl-ex/0006007 (2000).
 
+
+
+
+
+
 \bibitem{CERES} B. Lenkeit for CERES Coll., 
         Nucl. Phys. {\bf A654}, 627c (1999); nucl-ex/9910015.  
   
@@ -411,6 +485,47 @@ manifestation in photon spectrum.
 
 \bibitem{ZABPRC} E.E. Zabrodin, L.V. Bravina, H. Stocker, and W. Griener,
          Phys. Rev. C{\bf 59}, 894 (1999).
+
+
+\bibitem{Zhao:2011cv} 
+  X.~Zhao and R.~Rapp,
+  ``Medium Modifications and Production of Charmonia at LHC,''
+  Nucl.\ Phys.\ A {\bf 859}, 114 (2011).
+  %[arXiv:1102.2194 [hep-ph]].
+
+\bibitem{Huovinen:2009yb} 
+  P.~Huovinen and P.~Petreczky,
+  ``QCD Equation of State and Hadron Resonance Gas,''
+  Nucl.\ Phys.\ A {\bf 837}, 26 (2010).
+  %[arXiv:0912.2541 [hep-ph]].
+
+
+\bibitem{Aamodt:2010cz} 
+  K.~Aamodt {\it et al.}  [ALICE Collaboration],
+  ``Centrality dependence of the charged-particle multiplicity density at mid-rapidity in Pb-Pb collisions at $\sqrt{s_{NN}}=2.76$ TeV,''
+  Phys.\ Rev.\ Lett.\  {\bf 106}, 032301 (2011).
+  %[arXiv:1012.1657 [nucl-ex]].
+  
+
+\bibitem{Chatrchyan:2011pb} 
+  S.~Chatrchyan {\it et al.}  [CMS Collaboration],
+  ``Dependence on pseudorapidity and centrality of charged hadron production in PbPb collisions at a nucleon-nucleon 
+  centre-of-mass energy of 2.76 TeV,''
+  JHEP {\bf 1108}, 141 (2011).
+  %[arXiv:1107.4800 [nucl-ex]].
+
+\bibitem{Shuryak:1992wc} 
+  E.~V.~Shuryak,
+  ``Two stage equilibration in high-energy heavy ion collisions,''
+  Phys.\ Rev.\ Lett.\  {\bf 68}, 3270 (1992).
+  
+\bibitem{Abbas:2013bpa} 
+  E.~Abbas {\it et al.}  [ALICE Collaboration],
+  ``Centrality dependence of the pseudorapidity density distribution for charged particles 
+  in Pb-Pb collisions at $\sqrt{s_{\rm NN}}$ = 2.76 TeV,''
+  Phys.\ Lett.\ B {\bf 726}, 610 (2013).
+  %[arXiv:1304.0347 [nucl-ex]].
+
 
 \bibitem{AKM} A.K. Mohanty, P. Shukla and M. Gleiser,
               Phys. Rev. C{\bf 65}, 034908 (2002).

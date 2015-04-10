@@ -650,17 +650,12 @@ Double_t RateQGP_IntTau(Double_t Pt, Double_t RCent)
   Double_t Sum =0.0;
   Double_t VTau =0.0;
 
-  //cout<<Ntime<<endl;  
-  //const Double_t VTau0 = (R03+0.5*aT*tau0*tau0)*(R03+0.5*aT*tau0*tau0)*(z0+vZ*tau0)*pi;
-
   for(int i =0;i<Ntime;i++)
     {
 
       VTau = (RCent+0.5*aT*tau[i]*tau[i])*(RCent+0.5*aT*tau[i]*tau[i])*(z0+vZ*tau[i])*pi;
       Sum = Sum + RateQGP_IntEtaf(Pt,Temp[i])*(1-h[i])*VTau; 
       
-      //cout<<Pt<<"  "<<tau[i]<<"  "<<Temp[i]<<"  "<<h[i]<<endl;
-      //cout<<RateQGP_IntEtaf(Pt,Temp[i])<<endl;
     }
   return Sum*Steptime;
 }

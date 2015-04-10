@@ -144,7 +144,7 @@ void PhotonHistLHC()
   gStyle->SetPalette(1);
   //gStyle->SetPadTopMargin(0.10);
   //gStyle->SetPadBottomMargin(0.10);
-  gStyle->SetPadLeftMargin(0.19);
+  gStyle->SetPadLeftMargin(0.15);
   //gStyle->SetPadRightMargin(0.15);
   gStyle->SetFrameBorderMode(0);
   gStyle->SetFrameFillColor(0);
@@ -157,18 +157,56 @@ void PhotonHistLHC()
   gStyle->SetOptStat(0); 
   gStyle->SetOptFit(0);
   gStyle->SetHistLineWidth(2.0);
-  gStyle->SetCanvasDefH(800);
-  gStyle->SetCanvasDefW(800);  
+  gStyle->SetCanvasDefH(600);
+  gStyle->SetCanvasDefW(600);  
   
   // ================== Checking Data Graphs ===============================//
   cout<<" ========== checking data graphs =================================="<<endl;
 
-  Draw_AllDataGraphs();
+  //Draw_AllDataGraphs();
 
   //return;
 
+
+  TFile *OutFile = new TFile("LHC_DirecPhoton.root","Recreate");
+
   
   cout<<" simulating QGP evolution : "<<endl;
+
+
+
+  //============ QCD rates from ALICE Paper =================================//
+  
+  //From ALICE Paper 
+  
+  Double_t APt[30]={2.14,   2.38,   2.59,   2.86,   3.15,   3.48,   3.81,   4.16,   4.51,   4.86,   5.25,   5.62,   6.07,   
+		    6.58,   7.00,   7.47,   7.90,   8.35,   8.83,   9.34,   9.71,   10.24,   10.74,   11.27,   11.83,   
+		    12.30,   12.59,   13.08,   13.55,   13.94};
+  
+  Double_t D2NByPtDPtDy[30]={0.009903112,   0.006549429,   0.003952514,   0.002736074,   0.001650603,   0.001091140,   0.000721304,   
+			     0.000499134,   0.000345396,   0.000228305,   0.000150882,   0.000114419,   0.000079141,   0.000049934,   
+			     0.000039631,   0.000027410,   0.000021754,   0.000016491,   0.000011405,   0.000008643,   0.000007520,   
+			     0.000005444,   0.000004733,   0.000003426,   0.000002845,   0.000002258,   0.000001793,   0.000001559,   
+			     0.000001295,   0.000001180};
+
+  
+  TGraph *Grf_QCDRate = new TGraph(30,APt,D2NByPtDPtDy);
+  Grf_QCDRate->SetLineWidth(2);
+  Grf_QCDRate->SetMarkerStyle(20);
+  //Grf_QCDRate->GetYaxis()->SetRangeUser(0.0000001,1.0);
+  Grf_QCDRate->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
+  Grf_QCDRate->GetXaxis()->SetTitle("p_{T}[GeV/c]");
+  Grf_QCDRate->GetYaxis()->SetTitleOffset(1.5);
+  
+  new TCanvas;
+  gPad->SetTicks();
+  gPad->SetLogy();
+  gPad->SetLeftMargin(0.19);
+  Grf_QCDRate->Draw("AP");
+
+  //return;
+
+
 
   // ================ dn/deta graph for making Temp as a function of nPart ==========================================//
   Double_t NPartdNdEta[10] = {382.8,329.7,260.5,186.4,128.9,85.0,52.8,30.0,15.8};
@@ -216,7 +254,6 @@ void PhotonHistLHC()
 
 
 
-
   // Calculate Temp and Hadronic fraction as a function of time
   double TauLatt[10000], TempTauLatt[10000];
   double fQGPLatt[10000];
@@ -231,7 +268,6 @@ void PhotonHistLHC()
   
   Ntime=0;
   CalculateTandf_LatticeEOS(ssMB, R0MB);
-
 
   cout<<" Ntime "<<Ntime <<" ssMB "<<ssMB<<"  R0MB: "<<R0MB<<endl;
   
@@ -250,8 +286,14 @@ void PhotonHistLHC()
   grTempVsTauAnaC->SetLineStyle(9);
   grTempVsTauAnaC->GetYaxis()->SetTitle("Temperature (GeV)");
   grTempVsTauAnaC->GetXaxis()->SetTitle("#tau (fm)");
+  grTempVsTauAnaC->GetYaxis()->SetTitleOffset(1.5);
+    
   new TCanvas;
+  gPad->SetTicks();
   grTempVsTauAnaC->Draw("AL");
+  gPad->SaveAs("LHC_TempVsTau.pdf");  
+  gPad->SaveAs("LHC_TempVsTau.png");
+  gPad->SaveAs("LHC_TempVsTau.eps");
   
 
   TGraph *grFQGPVsTauAnaC = new TGraph(Ntime,TauLatt,fQGPLatt);
@@ -264,16 +306,18 @@ void PhotonHistLHC()
   grFQGPVsTauAnaC->GetXaxis()->SetTitle("#tau (fm)");
 
   new TCanvas;
+  gPad->SetTicks();
   grFQGPVsTauAnaC->Draw("AL");
-
+  gPad->SaveAs("LHC_FQGPVsTau.pdf");  
+  gPad->SaveAs("LHC_FQGPVsTau.png");
+  gPad->SaveAs("LHC_FQGPVsTau.eps");
 
   Double_t R040 = R05*TMath::Power(Npart(0,16)/Npart(0,2),0.5);
   Double_t ss040 = ss05*(funTwoComp->Eval(Npart(0,16))/dNdEtabyNpartby2[0]);
   
   Ntime=0;
   CalculateTandf_LatticeEOS(ss040, R040);
-
-
+  
   Double_t PtMin =0.1;
   Double_t PtMax =12.0;
   Double_t PtStep =0.5;
@@ -286,8 +330,6 @@ void PhotonHistLHC()
   Double_t DirectPhotonHadron[100]={0.0};
 
   Double_t DirectPhotonPQCD[100]={0.0};
-
-  //Double_t R0MB = R05*TMath::Power(Npart(0,40)/Npart(0,2),0.5);
 
   cout<<"Pt:  "<<"      "<<"Hadron  "<<"QGP  "<<"RatePhoton"<<endl;
   for(int i =0;i<NPt;i++)
@@ -311,6 +353,14 @@ void PhotonHistLHC()
   grfPhotonPQCD->GetYaxis()->SetTitleOffset(1.4);
   grfPhotonPQCD->SetLineColor(8);
 
+
+
+  new TCanvas;
+  gPad->SetTicks(1);
+  gPad->SetLogy(1);
+  grfPhotonPQCD->Draw("AL");
+
+  //  return;
 
 
   TGraph *grfDirectPhotonQGP = new TGraph(NPt,Pt,DirectPhotonQGP);
@@ -348,6 +398,7 @@ void PhotonHistLHC()
   new TCanvas;
   gPad->SetTicks();
   gPad->SetLogy();
+  gPad->SetLeftMargin(0.19);
   Draw_ALICE_DirectPhotonRate040_Pt(legd5);
 
   grfDirectPhoton->SetLineWidth(2);
@@ -357,6 +408,22 @@ void PhotonHistLHC()
   grfDirectPhotonQGP->Draw("Csame");
   grfPhotonPQCD->Draw("Csame");
   legd5->Draw("Lsame");
+
+  gPad->SaveAs("LHC_DirecPhoton.pdf");
+  gPad->SaveAs("LHC_DirecPhoton.eps");
+  gPad->SaveAs("LHC_DirecPhoton.gif");
+  gPad->SaveAs("LHC_DirecPhoton.png");
+
+  grTempVsTauAnaC->Write(); 
+  grFQGPVsTauAnaC->Write();  
+  grfPhotonPQCD->Write();  
+  grfDirectPhotonQGP->Write();  
+  grfDirectPhotonHadron->Write();  
+  grfDirectPhoton->Write();  
+  
+
+  OutFile->Close();
+
 
 
   return;
@@ -603,9 +670,10 @@ Double_t RateQCD(Double_t Pt)
 
   TGraph *Grf_QCDRate = new TGraph(30,APt,D2NByPtDPtDy);
 
-  Double_t Rate =0.0;
-  Rate =Grf_QCDRate->Eval(Pt);
 
+
+  Double_t Rate =0.0;
+  Rate =Grf_QCDRate->Eval(Pt,0,"");
 
   return Rate;
 
