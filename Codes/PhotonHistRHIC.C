@@ -156,7 +156,10 @@ void PhotonHistRHIC()
   //Draw_AllDataGraphs();
 
   // return;
-  
+
+  TFile *OutFile = new TFile("RHIC_DirecPhoton.root","Recreate");
+
+
   cout<<" simulating QGP evolution : "<<endl;
 
   // ================ dn/deta graph for making Temp as a function of nPart ==========================================//
@@ -552,6 +555,89 @@ void PhotonHistRHIC()
   grfDirectPhotonQGP4->Draw("Lsame");
   grfDirectPhotonPQCD4->Draw("Lsame");
   legd5->Draw("Lsame");
+
+  
+
+  grTempVsTauAnaC->SetName("grTempVsTauAnaC");
+  grFQGPVsTauAnaC->SetName("grFQGPVsTauAnaC");
+  grfDirectPhotonPQCD->SetName("grfDirectPhotonPQCD");
+  
+  grfDirectPhoton1->SetName("grfDirectPhoton1");
+  grfDirectPhotonHadron1->SetName("grfDirectPhotonHadron1");
+  grfDirectPhotonQGP1->SetName("grfDirectPhotonQGP1");
+  grfDirectPhotonPQCD1->SetName("grfDirectPhotonPQCD1"); 
+
+
+  grfDirectPhoton2->SetName("grfDirectPhoton2");
+  grfDirectPhotonHadron2->SetName("grfDirectPhotonHadron2");
+  grfDirectPhotonQGP2->SetName("grfDirectPhotonQGP2");
+  grfDirectPhotonPQCD2->SetName("grfDirectPhotonPQCD2"); 
+
+
+  grfDirectPhoton3->SetName("grfDirectPhoton3");
+  grfDirectPhotonHadron3->SetName("grfDirectPhotonHadron3");
+  grfDirectPhotonQGP3->SetName("grfDirectPhotonQGP3");
+  grfDirectPhotonPQCD3->SetName("grfDirectPhotonPQCD3"); 
+
+
+  grfDirectPhoton4->SetName("grfDirectPhoton4");
+  grfDirectPhotonHadron4->SetName("grfDirectPhotonHadron4");
+  grfDirectPhotonQGP4->SetName("grfDirectPhotonQGP4");
+  grfDirectPhotonPQCD4->SetName("grfDirectPhotonPQCD4"); 
+  
+  
+
+ grTempVsTauAnaC->SetTitle("grTempVsTauAnaC");
+  grFQGPVsTauAnaC->SetTitle("grFQGPVsTauAnaC");
+  grfDirectPhotonPQCD->SetTitle("grfDirectPhotonPQCD");
+  
+  grfDirectPhoton1->SetTitle("grfDirectPhoton1");
+  grfDirectPhotonHadron1->SetTitle("grfDirectPhotonHadron1");
+  grfDirectPhotonQGP1->SetTitle("grfDirectPhotonQGP1");
+  grfDirectPhotonPQCD1->SetTitle("grfDirectPhotonPQCD1"); 
+
+
+  grfDirectPhoton2->SetTitle("grfDirectPhoton2");
+  grfDirectPhotonHadron2->SetTitle("grfDirectPhotonHadron2");
+  grfDirectPhotonQGP2->SetTitle("grfDirectPhotonQGP2");
+  grfDirectPhotonPQCD2->SetTitle("grfDirectPhotonPQCD2"); 
+
+
+  grfDirectPhoton3->SetTitle("grfDirectPhoton3");
+  grfDirectPhotonHadron3->SetTitle("grfDirectPhotonHadron3");
+  grfDirectPhotonQGP3->SetTitle("grfDirectPhotonQGP3");
+  grfDirectPhotonPQCD3->SetTitle("grfDirectPhotonPQCD3"); 
+
+
+  grfDirectPhoton4->SetTitle("grfDirectPhoton4");
+  grfDirectPhotonHadron4->SetTitle("grfDirectPhotonHadron4");
+  grfDirectPhotonQGP4->SetTitle("grfDirectPhotonQGP4");
+  grfDirectPhotonPQCD4->SetTitle("grfDirectPhotonPQCD4"); 
+  
+
+ 
+  grTempVsTauAnaC->Write();
+  grFQGPVsTauAnaC->Write();
+  grfDirectPhotonPQCD->Write();
+  grfDirectPhoton1->Write();
+  grfDirectPhotonHadron1->Write();
+  grfDirectPhotonQGP1->Write();
+  grfDirectPhotonPQCD1->Write(); 
+  grfDirectPhoton2->Write();
+  grfDirectPhotonHadron2->Write();
+  grfDirectPhotonQGP2->Write();
+  grfDirectPhotonPQCD2->Write();
+  grfDirectPhoton3->Write();
+  grfDirectPhotonHadron3->Write();
+  grfDirectPhotonQGP3->Write();
+  grfDirectPhotonPQCD3->Write();
+  grfDirectPhoton4->Write();
+  grfDirectPhotonHadron4->Write();
+  grfDirectPhotonQGP4->Write();
+  grfDirectPhotonPQCD4->Write();
+
+
+  OutFile->Close();
 
 
 

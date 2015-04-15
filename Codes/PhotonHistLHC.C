@@ -414,6 +414,16 @@ void PhotonHistLHC()
   gPad->SaveAs("LHC_DirecPhoton.gif");
   gPad->SaveAs("LHC_DirecPhoton.png");
 
+
+  grTempVsTauAnaC->SetName("grTempVsTauAnaC"); 
+  grFQGPVsTauAnaC->SetName("grFQGPVsTauAnaC");  
+  grfPhotonPQCD->SetName("");  
+  grfDirectPhotonQGP->SetName("grfDirectPhotonQGP");  
+  grfDirectPhotonHadron->SetName("grfDirectPhotonHadron");  
+  grfDirectPhoton->SetName("grfDirectPhoton");  
+
+
+
   grTempVsTauAnaC->Write(); 
   grFQGPVsTauAnaC->Write();  
   grfPhotonPQCD->Write();  
@@ -421,6 +431,10 @@ void PhotonHistLHC()
   grfDirectPhotonHadron->Write();  
   grfDirectPhoton->Write();  
   
+
+
+
+
 
   OutFile->Close();
 
