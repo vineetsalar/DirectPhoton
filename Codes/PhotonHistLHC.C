@@ -193,7 +193,7 @@ void PhotonHistLHC()
   TGraph *Grf_QCDRate = new TGraph(30,APt,D2NByPtDPtDy);
   Grf_QCDRate->SetLineWidth(2);
   Grf_QCDRate->SetMarkerStyle(20);
-  //Grf_QCDRate->GetYaxis()->SetRangeUser(0.0000001,1.0);
+  Grf_QCDRate->GetYaxis()->SetRangeUser(0.0000001,1.0);
   Grf_QCDRate->GetYaxis()->SetTitle("d^{2}N/(2#pi p_{T}dydp_{T}[GeV^{-2}c^{2}])");
   Grf_QCDRate->GetXaxis()->SetTitle("p_{T}[GeV/c]");
   Grf_QCDRate->GetYaxis()->SetTitleOffset(1.5);
@@ -204,7 +204,41 @@ void PhotonHistLHC()
   gPad->SetLeftMargin(0.19);
   Grf_QCDRate->Draw("AP");
 
-  //return;
+  TF1 *funRateQCD = new TF1("funRateQCD","[0]+[1]/TMath::Sqrt(TMath::Abs(x))",2.0,14);  
+  funRateQCD->SetLineColor(2);
+  
+  funRateQCD->SetParameter(0,-0.005);
+  funRateQCD->SetParameter(1,0.0162);
+  
+  //funRateQCD->SetParameter(2,1.6);
+
+  Grf_QCDRate->Fit("funRateQCD","ML","",2.0,12.0);
+
+  new TCanvas;
+  gPad->SetTicks();
+  gPad->SetLogy();
+  gPad->SetLeftMargin(0.19);
+  Grf_QCDRate->Draw("AP");
+  funRateQCD->Draw("same");
+
+
+  /*
+  TF1 *funDnDetaNPart = new TF1("funDnDetaNPart","[0]*TMath::Power(x,[1])/(0.5*x)",0.0,500);
+  funDnDetaNPart->SetParameters(1.317,1.190);
+  funDnDetaNPart->SetLineColor(4);
+  
+  TF1 *funTwoComp = new TF1("funTwoComp","[0]*( [1]*x + (1-[1])*([2] + [3]*x +[4]*x*x)) /(0.5*x)",0.0,500);
+  funTwoComp->SetLineColor(2);
+  funTwoComp->SetParameter(0,2.441);
+  funTwoComp->SetParameter(1,0.788);
+  funTwoComp->SetParameter(2,-13.4708);
+  funTwoComp->SetParameter(3,1.69143);
+  funTwoComp->SetParameter(4,0.00709679);
+
+  grdNDetaNpart->Fit("funDnDetaNPart","M","",10.0,400.0);
+  */
+
+  return;
 
 
 
